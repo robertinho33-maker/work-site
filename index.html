@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8">
+    <title>Shine Express & Ecobelle - Loja Oficial</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="Shine Express, produtos para cabelo, cosmeticos profissionais, salao de beleza, tratamento capilar">
+    <meta name="description" content="Linha profissional Shine Express & Ecobelle para salões de beleza e cuidados em casa.">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&family=Playfair+Display:wght@500&family=Work+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome & Bootstrap Icons -->
+    <link href="css/vendor/fontawesome.min.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet via CDN -->
+
+    <!-- Bootstrap & Site Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- HEADER -->
+    <header id="site-header"></header>
+
+    <!-- SPINNER -->
+    <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-grow text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Carregando...</span>
+        </div>
+    </div>
+
+    <!-- BOTÃO FLUTUANTE DO CARRINHO -->
+    <button class="btn btn-primary btn-lg-square rounded-circle position-fixed bottom-0 end-0 m-4 shadow-lg"
+            style="z-index: 1050; width: 60px; height: 60px;"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#cartOffcanvas">
+        <i class="fa-solid fa-bag-shopping fa-lg text-dark"></i>
+        <span id="cart-badge-count" class="badge-cart">0</span>
+    </button>
+
+    <main>
+        <!-- HERO SALES BANNER -->
+        <section id="hero-sales" class="container-fluid p-0 hero-header bg-light mb-5">
+            <div class="container p-0">
+                <div class="row g-0 align-items-center">
+                    <div class="col-lg-6 hero-header-text py-5">
+                        <div class="py-5 px-3 ps-lg-0">
+                            <h1 class="font-dancing-script text-primary">Linha Profissional</h1>
+                            <h1 class="display-3 mb-4">Shine Express & Ecobelle</h1>
+                            <p class="fs-5 text-dark mb-4">
+                                Alta performance, brilho tridimensional e resultados de salão direto para o seu atendimento ou tratamento diário.
+                            </p>
+                            <a href="#catalogo" class="btn btn-primary text-uppercase px-5 py-3">
+                                Ver Catálogo Completo
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="p-4 text-center">
+                            <img class="img-fluid rounded shadow-lg" src="img/about.jpg" alt="Produtos Shine Express" style="max-height: 400px; object-fit: cover;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BANNER DE PROMOÇÃO -->
+        <section class="container-fluid bg-primary py-4 mb-5">
+            <div class="container text-center text-md-start">
+                <div class="row align-items-center">
+                    <div class="col-md-8 text-dark">
+                        <h3 class="font-dancing-script text-dark mb-1">Condição Especial para Profissionais</h3>
+                        <h2 class="mb-0 font-work-sans">Frete Grátis e Descontos Exclusivos no Pedido</h2>
+                    </div>
+                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                        <a href="https://wa.me/5511986215473" target="_blank" class="btn btn-dark text-uppercase px-4 py-3">
+                            <i class="fa-brands fa-whatsapp me-2"></i>Falar com Consultor
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CATÁLOGO DE PRODUTOS -->
+        <section id="catalogo" class="container-fluid py-5">
+            <div class="container">
+                <div class="text-center">
+                    <h1 class="font-dancing-script text-primary">Nossos Produtos</h1>
+                    <h1 class="mb-4">Catálogo de Vendas</h1>
+                </div>
+
+                <!-- FILTROS DE CATEGORIA (Gerados via JS ou Dinâmicos) -->
+                <div class="d-flex justify-content-center flex-wrap gap-2 mb-5" id="category-filters"></div>
+
+                <!-- GRID DE PRODUTOS -->
+                <div class="row g-4" id="product-grid"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- OFFCANVAS DO CARRINHO DE COMPRAS -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
+        <div class="offcanvas-header bg-dark text-white">
+            <h5 class="offcanvas-title text-primary font-dancing-script fs-3" id="cartOffcanvasLabel">Seu Carrinho</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column">
+            <div id="cart-items" class="flex-grow-1 overflow-auto"></div>
+
+            <div class="border-top pt-3 mt-3">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="fw-bold">Subtotal:</span>
+                    <span id="cart-subtotal" class="fw-bold text-primary fs-5">R$ 0,00</span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Cupom de Desconto</label>
+                    <div class="input-group">
+                        <input type="text" id="coupon-code" class="form-control text-uppercase" placeholder="Digite seu cupom">
+                        <button class="btn btn-outline-primary" type="button" onclick="applyCoupon()">Aplicar</button>
+                        <button class="btn btn-outline-danger" type="button" onclick="removeCoupon()">Remover</button>
+                    </div>
+                    <div id="coupon-message" class="form-text small mt-1"></div>
+                </div>
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Desconto:</span>
+                    <span id="cart-discount" class="fw-bold text-danger">- R$ 0,00</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="fw-bold fs-5">Total Final:</span>
+                    <span id="cart-total" class="fw-bold text-primary fs-5">R$ 0,00</span>
+                </div>
+                <p class="text-muted small mb-3">Preencha os dados de entrega na próxima etapa para concluir.</p>
+
+                <button class="btn btn-primary w-100 py-3 text-uppercase font-weight-bold" onclick="openCheckoutModal()">
+                    Avançar para Entrega <i class="fa-solid fa-arrow-right ms-2"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE CADASTRO E ENTREGA (TIPOGRAFIA UNIFICADA) -->
+    <div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content font-work-sans">
+                <div class="modal-header bg-dark text-white border-0 py-3">
+                    <h5 class="modal-title fs-5 fw-bold text-primary" id="checkoutModalLabel">
+                        <i class="fa-solid fa-truck me-2"></i>Dados de Entrega & Cadastro
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <form onsubmit="processCheckout(event)">
+                    <div class="modal-body p-4">
+                        <!-- SEÇÃO 1: DADOS PESSOAIS -->
+                        <div class="border-bottom pb-3 mb-4">
+                            <h6 class="text-uppercase text-muted fw-bold mb-3 fs-7 tracking-wide">1. Dados Pessoais</h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="cust-name" class="form-label fw-semibold text-secondary">Nome Completo</label>
+                                    <input type="text" id="cust-name" class="form-control" required placeholder="Digite seu nome">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="cust-phone" class="form-label fw-semibold text-secondary">WhatsApp / Telefone</label>
+                                    <input type="tel" id="cust-phone" class="form-control" required placeholder="(11) 99999-9999">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="cust-email" class="form-label fw-semibold text-secondary">E-mail</label>
+                                    <input type="email" id="cust-email" class="form-control" autocomplete="email" placeholder="cliente@email.com">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="cust-birthDate" class="form-label fw-semibold text-secondary">Data de Nascimento</label>
+                                    <input type="date" id="cust-birthDate" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SEÇÃO 2: ENDEREÇO E PAGAMENTO -->
+                        <div>
+                            <h6 class="text-uppercase text-muted fw-bold mb-3 fs-7 tracking-wide">2. Endereço de Entrega & Pagamento</h6>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="cust-cep" class="form-label fw-semibold text-secondary">CEP</label>
+                                    <input type="text" id="cust-cep" class="form-control" required placeholder="00000-000">
+                                </div>
+                                <div class="col-md-8">
+                                    <label for="cust-street" class="form-label fw-semibold text-secondary">Rua / Avenida</label>
+                                    <input type="text" id="cust-street" class="form-control" required placeholder="Ex: Rua das Flores">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="cust-number" class="form-label fw-semibold text-secondary">Número</label>
+                                    <input type="text" id="cust-number" class="form-control" required placeholder="123">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="cust-complement" class="form-label fw-semibold text-secondary">Complemento</label>
+                                    <input type="text" id="cust-complement" class="form-control" placeholder="Apto 42, Bloco B">
+                                </div>
+                                <div class="col-md-5">
+                                    <label for="cust-neighborhood" class="form-label fw-semibold text-secondary">Bairro</label>
+                                    <input type="text" id="cust-neighborhood" class="form-control" required placeholder="Ex: Centro">
+                                </div>
+                                <div class="col-md-8">
+                                    <label for="cust-city" class="form-label fw-semibold text-secondary">Cidade</label>
+                                    <input type="text" id="cust-city" class="form-control" value="São Paulo" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="cust-state" class="form-label fw-semibold text-secondary">UF</label>
+                                    <select id="cust-state" class="form-select">
+                                        <option value="">UF</option>
+                                        <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+                                        <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+                                        <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+                                        <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+                                        <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+                                        <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+                                        <option selected>SP</option><option>SE</option><option>TO</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-12 mt-3">
+                                    <label for="cust-payment" class="form-label fw-semibold text-secondary">Forma de Pagamento Preferida</label>
+                                    <select id="cust-payment" class="form-select" required>
+                                        <option value="Pix">Pix (Aprovação Imediata)</option>
+                                        <option value="Cartão de Crédito">Cartão de Crédito</option>
+                                        <option value="Cartão de Débito">Cartão de Débito</option>
+                                        <option value="Dinheiro">Dinheiro na entrega</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer bg-light border-0 py-3">
+                        <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Voltar</button>
+                        <button type="submit" class="btn btn-primary fw-bold px-4">
+                            <i class="fa-brands fa-whatsapp me-2"></i>Enviar Pedido via WhatsApp
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer id="site-footer"></footer>
+
+    <!-- BIBLIOTECAS JS -->
+    <script src="js/vendor/bootstrap.bundle.min.js"></script>
+
+    <!-- SCRIPTS DO PROJETO -->
+    <script type="module" src="js/auth-navbar.js"></script>
+    <script src="js/includes.js"></script>
+    <script type="module" src="js/cart.js"></script>
+    <script src="js/main.js"></script>
+
+    <!-- BUSCA AUTOMÁTICA DE CEP (ViaCEP) -->
+    <script>
+        document.getElementById('cust-cep')?.addEventListener('blur', function() {
+            let cep = this.value.replace(/\D/g, '');
+            if (cep.length === 8) {
+                fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!data.erro) {
+                            if (document.getElementById('cust-street')) document.getElementById('cust-street').value = data.logradouro;
+                            if (document.getElementById('cust-neighborhood')) document.getElementById('cust-neighborhood').value = data.bairro;
+                            if (document.getElementById('cust-city')) document.getElementById('cust-city').value = data.localidade;
+                            if (document.getElementById('cust-state')) document.getElementById('cust-state').value = data.uf;
+                            document.getElementById('cust-number')?.focus();
+                        }
+                    })
+                    .catch(() => console.error('Erro ao buscar o CEP'));
+            }
+        });
+    </script>
+</body>
+</html>
