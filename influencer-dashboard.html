@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Influencer - Beleza Fácil</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body class="bg-light">
+
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">Área do Parceiro</a>
+            <div class="d-flex align-items-center gap-2">
+                <button id="btn-login" class="btn btn-outline-light btn-sm">🔑 Entrar com Google</button>
+                <div id="user-info" class="d-none align-items-center gap-2 text-white">
+                    <img id="user-photo" src="" alt="User" class="rounded-circle" width="32" height="32">
+                    <span id="user-email" class="small fw-semibold"></span>
+                    <button id="btn-logout" class="btn btn-danger btn-sm ms-2">Sair</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mb-5">
+        
+        <!-- Cards de Métricas do Influencer -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-3 border-start border-4 border-primary">
+                    <span class="text-muted small">Total em Vendas</span>
+                    <h3 class="fw-bold mb-0" id="inf-total-sales">R$ 0,00</h3>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-3 border-start border-4 border-warning">
+                    <span class="text-muted small">Comissões Pendentes</span>
+                    <h3 class="fw-bold mb-0 text-warning" id="inf-pending-comm">R$ 0,00</h3>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-3 border-start border-4 border-success">
+                    <span class="text-muted small">Comissões Recebidas</span>
+                    <h3 class="fw-bold mb-0 text-success" id="inf-paid-comm">R$ 0,00</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabela de Histórico de Indicações -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-clock-history me-2"></i>Minhas Indicações e Comissões</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Pedido</th>
+                                <th>Cupom</th>
+                                <th>Data</th>
+                                <th>Valor Comissão</th>
+                                <th>Status Pagamento</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inf-commissions-table">
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-muted">Faça login para ver seu histórico.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module" src="js/influencer-dashboard.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

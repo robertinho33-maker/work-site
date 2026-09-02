@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Cupons - Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body class="bg-light">
+
+    <!-- Navegação Principial -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="admin.html">Painel Admin</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="admin.html">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="influencers.html">Influencers</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="coupons.html">Cupons</a></li>
+                </ul>
+
+                <div class="d-flex align-items-center gap-2">
+                    <button id="btn-login" class="btn btn-outline-light btn-sm">🔑 Entrar com Google</button>
+                    <div id="user-info" class="d-none align-items-center gap-2 text-white">
+                        <img id="user-photo" src="" alt="User" class="rounded-circle" width="32" height="32">
+                        <span id="user-email" class="small fw-semibold"></span>
+                        <button id="btn-logout" class="btn btn-danger btn-sm ms-2">Sair</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row g-4">
+            
+            <!-- Formulário de Cadastro de Cupom -->
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 p-3">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-tag-fill me-2 text-primary"></i>Novo Cupom</h5>
+                    <form id="form-coupon">
+                        <div class="mb-3">
+                            <label for="coupon-code" class="form-label small text-muted">Código do Cupom</label>
+                            <input type="text" id="coupon-code" class="form-control text-uppercase" placeholder="EX: SHINE10" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="coupon-discount" class="form-label small text-muted">Desconto (%)</label>
+                            <input type="number" id="coupon-discount" class="form-control" min="1" max="100" placeholder="10" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="coupon-commission" class="form-label small text-muted">Comissão Influencer (%)</label>
+                            <input type="number" id="coupon-commission" class="form-control" min="0" max="100" placeholder="5" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="coupon-influencer" class="form-label small text-muted">Influencer Vinculado</label>
+                            <input type="email" id="coupon-influencer" class="form-control" placeholder="email@influencer.com" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-plus-circle me-1"></i>Salvar Cupom
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tabela de Listagem de Cupons -->
+            <div class="col-md-8">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0 fw-bold"><i class="bi bi-list-stars me-2"></i>Cupons Cadastrados</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Desconto</th>
+                                        <th>Comissão</th>
+                                        <th>Influencer</th>
+                                        <th>Status</th>
+                                        <th class="text-end">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="coupons-table-body">
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4 text-muted">Carregando cupons...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script type="module" src="js/coupons.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

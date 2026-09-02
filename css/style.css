@@ -1,0 +1,713 @@
+/********** Studio Totti - CSS Organizado **********/
+
+/*** Variáveis e Root ***/
+:root {
+    --bs-primary: #c5a059; /* Cor principal do Studio Totti */
+}
+
+/*** Spinner e Overlays ***/
+#spinner {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .5s ease-out, visibility 0s linear .5s;
+    z-index: 99999;
+}
+
+#spinner.show {
+    transition: opacity .5s ease-out, visibility 0s linear 0s;
+    visibility: visible;
+    opacity: 1;
+}
+
+#loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,0.9);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/*** Tipografia ***/
+.font-work-sans { font-family: "Work Sans", sans-serif; font-weight: 400; }
+.font-playfair-display { font-family: "Playfair Display", serif; font-weight: 400; }
+.font-dancing-script { font-family: "Dancing Script", cursive; font-weight: 400; }
+
+/*** Botões ***/
+.btn { position: relative; transition: .5s; }
+.btn-square { width: 38px; height: 38px; }
+.btn-sm-square { width: 32px; height: 32px; }
+.btn-lg-square { width: 48px; height: 48px; }
+
+.btn-square, .btn-sm-square, .btn-lg-square {
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-dark, .btn-primary { margin: 10px; }
+
+/* Efeito de borda nos botões */
+.btn-primary::before, .btn-primary::after,
+.btn-dark::before, .btn-dark::after {
+    position: absolute; content: "";
+    width: calc(100% + 10px); height: calc(100% + 10px);
+    top: -5px; left: -5px;
+}
+
+.btn-primary::before { border-left: 2px solid var(--bs-primary); border-right: 2px solid var(--bs-primary); top: -10px; height: calc(100% + 20px); }
+.btn-primary::after { border-top: 2px solid var(--bs-primary); border-bottom: 2px solid var(--bs-primary); left: -10px; width: calc(100% + 20px); }
+
+/*** Navbar ***/
+.navbar .navbar-nav .nav-link {
+    margin: 0 12px;
+    font-family: "Playfair Display", serif;
+    font-size: 18px;
+    text-transform: uppercase;
+    color: var(--bs-dark);
+}
+
+.navbar .navbar-nav .nav-link:hover,
+.navbar .navbar-nav .nav-link.active { color: var(--bs-primary); }
+
+/*** Grade de Horários (Tabela) ***/
+#tabelaAgenda th, #tabelaAgenda td {
+    text-align: center;
+    vertical-align: top;
+    padding: 10px;
+    min-width: 150px;
+    border: 1px solid #dee2e6;
+}
+
+#tabelaAgenda th:first-child, #tabelaAgenda td:first-child {
+    min-width: 80px;
+    background-color: #f8f9fa;
+    font-weight: bold;
+    vertical-align: middle;
+}
+
+.cell-agendamento {
+    min-height: 95px;
+    position: relative;
+    background-color: #fafafa;
+}
+
+/*** Cards de Agendamento ***/
+.card-agendamento {
+    background: #fff;
+    border-left: 4px solid var(--bs-primary) !important;
+    padding: 8px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    font-size: 0.8rem;
+    text-align: left;
+    transition: 0.2s;
+}
+
+.card-agendamento:hover {
+    transform: translateY(-2px);
+}
+
+/*** Calendário Lateral ***/
+.day-cell {
+    cursor: pointer;
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: center;
+    transition: 0.2s;
+}
+
+.day-cell:hover { background-color: #f8f9fa; }
+
+.day-cell.selected {
+    background: var(--bs-primary) !important;
+    color: white;
+    font-weight: bold;
+}
+
+/*** Elementos Auxiliares ***/
+.btn-add-inline {
+    opacity: 0;
+    transition: 0.2s;
+}
+
+.cell-agendamento:hover .btn-add-inline {
+    opacity: 1;
+}
+
+.is-valid-client {
+    border-color: #198754 !important;
+}
+
+.back-to-top {
+    position: fixed !important;
+    display: none;
+    right: 45px; bottom: 45px;
+    z-index: 99;
+}
+
+/*** Media Queries (Responsividade) ***/
+@media (max-width: 991.98px) {
+    .navbar .navbar-nav .nav-link { margin-left: 0; padding: 10px 0; }
+}
+
+@media (min-width: 992px) {
+    .navbar .nav-item:hover .dropdown-menu { top: 100%; visibility: visible; opacity: 1; transition: .5s; }
+}
+
+/* Autocomplete dropdown */
+.autocomplete-items {
+    position: absolute;
+    border: 1px solid #ddd;
+    border-top: none;
+    z-index: 99;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    background: white;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.autocomplete-item {
+    padding: 10px;
+    cursor: pointer;
+    background-color: white;
+}
+
+.autocomplete-item:hover, .autocomplete-active {
+    background-color: var(--bs-primary) !important;
+    color: white;
+}
+
+/* =====================================================
+   PRODUTOS
+   ===================================================== */
+.product-visual {
+    width: 100%;
+    height: 220px; /* Ajuste a altura conforme seu layout */
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Mantém a proporção da imagem sem cortar o produto */
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover .product-image {
+    transform: scale(1.05); /* Efeito suave ao passar o mouse */
+}
+.products-section {
+    background: #faf9f7;
+}
+
+
+/* Introdução */
+
+.products-intro {
+    max-width: 650px;
+    line-height: 1.8;
+}
+
+
+/* Filtros */
+
+.products-filters {
+    margin-bottom: 35px;
+}
+
+.product-filter {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: transparent;
+    color: #555;
+    padding: 9px 20px;
+    border-radius: 30px;
+    font-size: 14px;
+    transition: all 0.25s ease;
+}
+
+.product-filter:hover,
+.product-filter.active {
+    background: var(--bs-primary);
+    color: #fff;
+    border-color: var(--bs-primary);
+}
+
+
+/* Card */
+
+.product-card {
+    height: 100%;
+    background: #fff;
+    border: 0;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.04);
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+}
+
+
+/* Área visual */
+
+.product-visual9 {
+    min-height: 220px;
+    background: #f5f3f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+
+/*
+   Como o CSV ainda não possui imagem,
+   usamos uma apresentação tipográfica.
+*/
+
+.product-visual i {
+    font-size: 55px;
+    color: var(--bs-primary);
+    opacity: 0.55;
+}
+
+
+/* Categoria */
+
+.product-category {
+    display: inline-block;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--bs-primary);
+    margin-bottom: 8px;
+}
+
+
+/* Conteúdo */
+
+.product-content {
+    padding: 22px;
+}
+
+.product-name {
+    font-family: "Playfair Display", serif;
+    font-size: 20px;
+    line-height: 1.35;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.product-description {
+    color: #777;
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 18px;
+}
+
+
+/* Rodapé do card */
+
+.product-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.product-price {
+    font-family: "Playfair Display", serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--bs-primary);
+}
+
+.product-stock {
+    font-size: 12px;
+    color: #888;
+}
+
+
+/* Botão */
+
+.product-button {
+    border: 0;
+    background: transparent;
+    color: var(--bs-primary);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0;
+}
+
+.product-button:hover {
+    color: #333;
+}
+
+
+/* Responsividade */
+
+@media (max-width: 767px) {
+
+    .products-section {
+        padding-top: 60px;
+        padding-bottom: 60px;
+    }
+
+    .product-visual9 {
+        min-height: 190px;
+    }
+
+    .product-content {
+        padding: 18px;
+    }
+
+}
+
+/* Estilos Customizados do Carrinho e Cards */
+.badge-cart {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #dc3545;
+    color: #fff;
+    border-radius: 50%;
+    padding: 2px 7px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.product-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+.product-img-container {
+    height: 240px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+}
+
+.product-img-container img {
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.filter-btn.active {
+    background-color: #212529 !important;
+    color: #fff !important;
+    border-color: #212529 !important;
+}
+/* =========================================================
+   CATÁLOGO FINAL - STUDIO FIOS BELOS
+   Camada final de normalização visual
+   ========================================================= */
+
+#catalogo {
+    width: 100%;
+    overflow: hidden;
+}
+
+#catalogo > .container {
+    width: 100%;
+    max-width: 1320px;
+}
+
+#category-filters {
+    width: 100%;
+}
+
+#category-filters .filter-btn {
+    border-radius: 999px;
+    padding: 9px 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+#product-grid {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+#product-grid > .product-column {
+    display: flex;
+}
+
+/* CARD */
+
+#product-grid .product-card {
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 0;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 5px 24px rgba(0, 0, 0, 0.06);
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+#product-grid .product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.11);
+}
+
+/* IMAGEM */
+
+#product-grid .product-img-container {
+    width: 100%;
+    height: 260px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: #f8f9fa;
+    overflow: hidden;
+}
+
+#product-grid .product-image {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    transition: transform 0.35s ease;
+}
+
+#product-grid .product-card:hover .product-image {
+    transform: scale(1.05);
+}
+
+/* CONTEÚDO */
+
+#product-grid .product-content {
+    flex: 1;
+    min-width: 0;
+    padding: 22px;
+}
+
+#product-grid .product-category {
+    display: inline-block;
+    margin-bottom: 8px;
+    color: var(--bs-primary);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+#product-grid .product-name {
+    margin: 0 0 10px;
+    color: #212529;
+    font-size: 1.08rem;
+    line-height: 1.4;
+    font-weight: 700;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+#product-grid .product-description {
+    margin: 0;
+    min-height: 48px;
+    color: #6c757d;
+    font-size: 0.88rem;
+    line-height: 1.6;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* RODAPÉ DO CARD */
+
+#product-grid .product-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+#product-grid .product-price {
+    color: #212529;
+    font-size: 1.25rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+#product-grid .btn-buy-product {
+    flex-shrink: 0;
+    border-radius: 999px;
+    padding: 9px 15px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+#product-grid .btn-buy-product:hover {
+    transform: translateY(-1px);
+}
+
+/* ESTADO VAZIO */
+
+.catalog-empty {
+    color: #6c757d;
+}
+
+.catalog-empty i {
+    opacity: 0.35;
+}
+
+.catalog-empty h5 {
+    margin-bottom: 8px;
+    color: #343a40;
+}
+
+/* TABLET */
+
+@media (max-width: 991.98px) {
+
+    #catalogo > .container {
+        max-width: 960px;
+    }
+
+    #product-grid .product-img-container {
+        height: 230px;
+    }
+
+}
+
+/* CELULAR */
+
+@media (max-width: 767.98px) {
+
+    #catalogo {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #catalogo > .container {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    #category-filters {
+        justify-content: flex-start !important;
+        overflow-x: auto;
+        flex-wrap: nowrap !important;
+        padding: 4px 2px 12px;
+        scrollbar-width: thin;
+    }
+
+    #category-filters .filter-btn {
+        flex: 0 0 auto;
+        padding: 8px 15px;
+        font-size: 0.8rem;
+    }
+
+    #product-grid {
+        row-gap: 18px !important;
+    }
+
+    #product-grid > .product-column {
+        width: 100%;
+    }
+
+    #product-grid .product-img-container {
+        height: 220px;
+        padding: 20px;
+    }
+
+    #product-grid .product-content {
+        padding: 18px;
+    }
+
+    #product-grid .product-name {
+        font-size: 1rem;
+    }
+
+    #product-grid .product-description {
+        font-size: 0.84rem;
+    }
+
+    #product-grid .product-footer {
+        align-items: center;
+    }
+
+    #product-grid .product-price {
+        font-size: 1.1rem;
+    }
+
+}
+
+/* CELULARES MUITO PEQUENOS */
+
+@media (max-width: 380px) {
+
+    #product-grid .product-img-container {
+        height: 200px;
+    }
+
+    #product-grid .product-content {
+        padding: 15px;
+    }
+
+    #product-grid .product-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #product-grid .product-price {
+        text-align: center;
+    }
+
+    #product-grid .btn-buy-product {
+        width: 100%;
+    }
+
+}
+
+/* EVITA ANIMAÇÕES QUE DEIXEM O CATÁLOGO INVISÍVEL */
+
+#product-grid .wow,
+#category-filters.wow {
+    visibility: visible !important;
+}
+

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Influencers - Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body class="bg-light">
+
+    <!-- Navegação Principal -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="admin.html">Painel Admin</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="admin.html">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="influencers.html">Influencers</a></li>
+                    <li class="nav-item"><a class="nav-link" href="coupons.html">Cupons</a></li>
+                </ul>
+
+                <div class="d-flex align-items-center gap-2">
+                    <button id="btn-login" class="btn btn-outline-light btn-sm">🔑 Entrar com Google</button>
+                    <div id="user-info" class="d-none align-items-center gap-2 text-white">
+                        <img id="user-photo" src="" alt="User" class="rounded-circle" width="32" height="32">
+                        <span id="user-email" class="small fw-semibold"></span>
+                        <button id="btn-logout" class="btn btn-danger btn-sm ms-2">Sair</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row g-4">
+            
+            <!-- Formulário de Cadastro / Edição -->
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 p-3">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-person-badge-fill me-2 text-primary"></i>Novo Influencer</h5>
+                    <form id="form-influencer">
+                        <div class="mb-3">
+                            <label for="influencer-name" class="form-label small text-muted">Nome Completo</label>
+                            <input type="text" id="influencer-name" class="form-control" placeholder="Roberto Ferreira" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="influencer-email" class="form-label small text-muted">E-mail de Login/Contato</label>
+                            <input type="email" id="influencer-email" class="form-control" placeholder="roberto@shineexpress.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="influencer-phone" class="form-label small text-muted">WhatsApp / Telefone</label>
+                            <input type="tel" id="influencer-phone" class="form-control" placeholder="(11) 99999-9999">
+                        </div>
+                        <div class="mb-3">
+                            <label for="influencer-pix" class="form-label small text-muted">Chave PIX (Para Pagamento)</label>
+                            <input type="text" id="influencer-pix" class="form-control" placeholder="CPF/E-mail/Telefone/Chave Aleatória" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-person-plus me-1"></i>Salvar Influencer
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Listagem de Influencers -->
+            <div class="col-md-8">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0 fw-bold"><i class="bi bi-people me-2"></i>Influencers Cadastrados</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>E-mail</th>
+                                        <th>Telefone</th>
+                                        <th>Chave PIX</th>
+                                        <th class="text-end">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="influencers-table-body">
+                                    <tr>
+                                        <td colspan="5" class="text-center py-4 text-muted">Carregando parceiros...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script type="module" src="js/influencers.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

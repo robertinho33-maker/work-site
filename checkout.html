@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Beleza Fácil</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body class="bg-light">
+
+    <!-- Navegação -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container d-flex justify-content-between">
+        <a class="navbar-brand fw-bold" href="#">Beleza Fácil</a>
+        <div id="user-info" class="d-none align-items-center text-white">
+            <img id="user-photo" src="" class="rounded-circle me-2" width="32" height="32">
+            <small id="user-email" class="me-3 fw-semibold"></small>
+        </div>
+    </div>
+    </nav>
+
+    <div class="container mb-5">
+        <h3 class="fw-bold mb-4"><i class="bi bi-cart-check me-2"></i>Finalizar Compra</h3>
+
+        <div class="row g-4">
+            
+            <!-- Detalhes do Pedido / Itens -->
+            <div class="col-md-7">
+                <div class="card p-3 border-0 shadow-sm mb-3">
+                    <h5 class="fw-bold mb-3">Resumo dos Produtos</h5>
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+                        <div>
+                            <h6 class="mb-0 fw-semibold">Kit Shine Express</h6>
+                            <small class="text-muted">Quantidade: 1</small>
+                        </div>
+                        <span class="fw-bold">R$ 150,00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coluna de Pagamento e Cupom -->
+            <div class="col-md-5">
+                
+                <!-- Área de Cupom de Desconto -->
+                <div class="card p-3 mb-3 border-0 shadow-sm">
+                    <label for="input-coupon" class="form-label fw-semibold">Cupom de Desconto</label>
+                    <div class="input-group">
+                        <input type="text" id="input-coupon" class="form-control text-uppercase" placeholder="EX: SHINE10">
+                        <button id="btn-apply-coupon" class="btn btn-outline-primary" type="button">Aplicar</button>
+                    </div>
+                    <div id="coupon-feedback" class="small mt-2"></div>
+                </div>
+
+                <!-- Resumo de Valores -->
+                <div class="card p-3 border-0 shadow-sm">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal:</span>
+                        <strong id="cart-subtotal">R$ 150,00</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2 text-success d-none" id="row-discount">
+                        <span>Desconto (<span id="discount-percent">0</span>%):</span>
+                        <strong id="cart-discount">- R$ 0,00</strong>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between fs-5 fw-bold">
+                        <span>Total:</span>
+                        <strong id="cart-total" class="text-primary">R$ 150,00</strong>
+                    </div>
+                    
+                    <button id="btn-finish-order" class="btn btn-success btn-lg w-100 mt-3">
+                        <i class="bi bi-check-circle me-1"></i>Finalizar Pedido
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/checkout.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
