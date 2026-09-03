@@ -63,17 +63,20 @@ function parsePrice(value) {
 
 function formatPrice(value) {
 
-    const price = parsePrice(value);
+    const price =
+        parsePrice(value);
 
-    if (!price) {
+
+    if (!Number.isFinite(price)) {
         return 'Preço sob consulta';
     }
+
 
     return price.toLocaleString(
         'pt-BR',
         {
-            style: 'currency',
-            currency: 'BRL'
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
         }
     );
 }
