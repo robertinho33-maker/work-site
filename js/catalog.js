@@ -5,7 +5,6 @@ const CATALOG_PATH = 'resources/catalogo.csv';
 let catalogProducts = [];
 let activeCategory = '';
 
-
 /* =========================================================
    SEGURANÇA
 ========================================================= */
@@ -19,131 +18,116 @@ function escapeHTML(value) {
         .replace(/'/g, '&#039;');
 }
 
-
 /* =========================================================
    PREÇO
 ========================================================= */
 
 function parsePrice(value) {
-
-    if (value === null || value === undefined) {
-        return 0;
-    }
+    if (value === null || value === undefined) return 0;
 
     let text = String(value).trim();
-
-    if (!text) {
-        return 0;
-    }
+    if (!text) return 0;
 
     text = text
+        .replace(/\u00A0/g, '')
         .replace(/\s/g, '')
-        .replace(/R\$/gi, '');
+        .replace(/R\$/gi, '')
+        .replace(/[^\d.,+-]/g, '');
 
-    /*
-     * O CSV usa valores como:
-     * 64,9
-     * 49,2
-     * 13,14
-     *
-     * Como o CSV usa vírgula como decimal,
-     * não removemos a vírgula antes desta conversão.
-     */
+    if (!text) return 0;
 
-    text = text.replace(/\./g, '');
-    text = text.replace(',', '.');
+    const hasComma = text.includes(',');
+    const hasDot = text.includes('.');
+
+    if (hasComma) {
+        text = text.replace(/\./g, '').replace(',', '.');
+        const number = Number(text);
+        return Number.isFinite(number) ? number : 0;
+    }
+
+    if (hasDot) {
+        const parts = text.split('.');
+        if (parts.length === 2 && parts[1].length === 2) {
+            const number = Number(text);
+            return Number.isFinite(number) ? number : 0;
+        }
+
+        const normalized = text.replace(/\./g, '');
+        const number = Number(normalized);
+
+        if (Number.isFinite(number) && Number.isInteger(number) && number >= 100) {
+            return number / 100;
+        }
+
+        return Number.isFinite(number) ? number : 0;
+    }
 
     const number = Number(text);
+    if (!Number.isFinite(number)) return 0;
 
-    return Number.isFinite(number)
-        ? number
-        : 0;
+    if (Number.isInteger(number) && number >= 100) {
+        return number / 100;
+    }
+
+    return number;
 }
 
-
 function formatPrice(value) {
+    const price = typeof value === 'number' ? value : parsePrice(value);
 
-    const price =
-        parsePrice(value);
-
-
-    if (!Number.isFinite(price)) {
+    if (!Number.isFinite(price) || price <= 0) {
         return 'Preço sob consulta';
     }
 
-
-    return price.toLocaleString(
-        'pt-BR',
-        {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }
-    );
+    return price.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
 }
-
 
 /* =========================================================
    CSV
 ========================================================= */
 
-/*
- * Parser CSV compatível com campos entre aspas,
- * inclusive campos contendo vírgulas.
- */
 function parseCSV(text) {
-
     const rows = [];
-
     let row = [];
     let field = '';
     let insideQuotes = false;
 
     for (let i = 0; i < text.length; i++) {
-
         const char = text[i];
         const next = text[i + 1];
 
         if (char === '"' && insideQuotes && next === '"') {
-
             field += '"';
             i++;
-
             continue;
         }
 
         if (char === '"') {
-
             insideQuotes = !insideQuotes;
-
             continue;
         }
 
         if (char === ',' && !insideQuotes) {
-
             row.push(field);
             field = '';
-
             continue;
         }
 
-        if (
-            (char === '\n' || char === '\r') &&
-            !insideQuotes
-        ) {
-
-            if (char === '\r' && next === '\n') {
-                i++;
-            }
+        if ((char === '\n' || char === '\r') && !insideQuotes) {
+            if (char === '\r' && next === '\n') i++;
 
             row.push(field);
             field = '';
 
-            if (row.some(value => value.trim() !== '')) {
+            if (row.some(val => val.trim() !== '')) {
                 rows.push(row);
             }
-
             row = [];
-
             continue;
         }
 
@@ -151,183 +135,106 @@ function parseCSV(text) {
     }
 
     if (field !== '' || row.length > 0) {
-
         row.push(field);
-
-        if (row.some(value => value.trim() !== '')) {
+        if (row.some(val => val.trim() !== '')) {
             rows.push(row);
         }
     }
 
-    if (rows.length === 0) {
-        return [];
-    }
+    if (rows.length === 0) return [];
 
-    const headers = rows[0].map(
-        header => header.trim()
-    );
+    const headers = rows[0].map(header => header.trim());
 
     return rows
         .slice(1)
         .map(columns => {
-
             const product = {};
-
-            headers.forEach(
-                (header, index) => {
-
-                    product[header] =
-                        (columns[index] ?? '').trim();
-
-                }
-            );
-
+            headers.forEach((header, index) => {
+                product[header] = (columns[index] ?? '').trim();
+            });
             return product;
-
         })
-        .filter(product =>
-            Object.values(product)
-                .some(value => value !== '')
-        );
+        .filter(product => Object.values(product).some(val => val !== ''));
 }
-
 
 /* =========================================================
    NORMALIZAÇÃO DO PRODUTO
 ========================================================= */
 
 function normalizeProduct(product, index) {
+    const price = parsePrice(product.Preço);
+
+    console.log('[CATÁLOGO] Preço:', {
+        sku: product.SKU || '',
+        produto: product.Produto || '',
+        csv: product.Preço || '',
+        number: price,
+        exibicao: formatPrice(price)
+    });
 
     return {
         id: product.SKU || `catalog-${index + 1}`,
-
         name: product.Produto || '',
-
         weight: product.peso || '',
-
-        price: parsePrice(product.Preço),
-
+        price,
         priceRaw: product.Preço || '',
-
         category: product.Categoria || 'Sem categoria',
-
         stock: product.Estoque || '',
-
         description: product.Descrição || '',
-
         sku: product.SKU || '',
-
         image: product.Imagem || ''
     };
 }
-
 
 /* =========================================================
    CATEGORIAS
 ========================================================= */
 
 function getCategories(products) {
-
-    return [
-        ...new Set(
-            products
-                .map(product => product.category)
-                .filter(Boolean)
-        )
-    ].sort(
-        (a, b) =>
-            a.localeCompare(b, 'pt-BR')
+    return [...new Set(products.map(p => p.category).filter(Boolean))].sort((a, b) =>
+        a.localeCompare(b, 'pt-BR')
     );
 }
 
-
 function renderCategoryFilters() {
+    const container = document.getElementById('category-filters');
+    if (!container) return;
 
-    const container =
-        document.getElementById(
-            'category-filters'
-        );
-
-    if (!container) {
-        return;
-    }
-
-    const categories =
-        getCategories(catalogProducts);
-
+    const categories = getCategories(catalogProducts);
     container.innerHTML = '';
 
-    const allButton =
-        createCategoryButton(
-            'Todos',
-            ''
-        );
-
-    container.appendChild(allButton);
-
+    container.appendChild(createCategoryButton('Todos', ''));
 
     categories.forEach(category => {
-
-        container.appendChild(
-            createCategoryButton(
-                category,
-                category
-            )
-        );
-
+        container.appendChild(createCategoryButton(category, category));
     });
-
 }
 
-
-function createCategoryButton(
-    label,
-    category
-) {
-
-    const button =
-        document.createElement('button');
-
+function createCategoryButton(label, category) {
+    const button = document.createElement('button');
     button.type = 'button';
-
     button.textContent = label;
-
     button.className =
         category === activeCategory
             ? 'btn btn-primary category-button'
             : 'btn btn-outline-primary category-button';
 
-    button.addEventListener(
-        'click',
-        () => {
-
-            activeCategory = category;
-
-            renderCategoryFilters();
-
-            renderProducts();
-
-        }
-    );
+    button.addEventListener('click', () => {
+        activeCategory = category;
+        renderCategoryFilters();
+        renderProducts();
+    });
 
     return button;
 }
-
 
 /* =========================================================
    STATUS DE ESTOQUE
 ========================================================= */
 
 function isProductAvailable(product) {
-
-    const stock =
-        String(product.stock || '')
-            .trim()
-            .toLowerCase();
-
-    if (!stock) {
-        return true;
-    }
+    const stock = String(product.stock || '').trim().toLowerCase();
+    if (!stock) return true;
 
     if (
         stock.includes('sem estoque') ||
@@ -341,50 +248,28 @@ function isProductAvailable(product) {
     return true;
 }
 
-
 /* =========================================================
    FILTRO
 ========================================================= */
 
 function getFilteredProducts() {
-
-    if (!activeCategory) {
-        return catalogProducts;
-    }
-
-    return catalogProducts.filter(
-        product =>
-            product.category === activeCategory
-    );
+    if (!activeCategory) return catalogProducts;
+    return catalogProducts.filter(product => product.category === activeCategory);
 }
-
 
 /* =========================================================
    CARD DO PRODUTO
 ========================================================= */
 
 function createProductCard(product) {
+    const column = document.createElement('div');
+    column.className = 'col-xl-4 col-lg-4 col-md-6';
 
-    const column =
-        document.createElement('div');
+    const article = document.createElement('article');
+    article.className = 'card product-card h-100 border-0 shadow-sm';
 
-    column.className =
-        'col-xl-4 col-lg-4 col-md-6';
-
-
-    const article =
-        document.createElement('article');
-
-    article.className =
-        'card product-card h-100 border-0 shadow-sm';
-
-
-    const imageWrapper =
-        document.createElement('div');
-
-    imageWrapper.className =
-        'product-image-wrapper';
-
+    const imageWrapper = document.createElement('div');
+    imageWrapper.className = 'product-image-wrapper';
     imageWrapper.style.cssText = `
         height: 280px;
         background: #f8f8f8;
@@ -394,22 +279,12 @@ function createProductCard(product) {
         overflow: hidden;
     `;
 
-
     if (product.image) {
-
-        const image =
-            document.createElement('img');
-
+        const image = document.createElement('img');
         image.src = product.image;
-
         image.alt = product.name;
-
-        image.className =
-            'img-fluid';
-
-        image.loading =
-            'lazy';
-
+        image.className = 'img-fluid';
+        image.loading = 'lazy';
         image.style.cssText = `
             width: 100%;
             height: 100%;
@@ -417,443 +292,194 @@ function createProductCard(product) {
             padding: 20px;
         `;
 
-        image.addEventListener(
-            'error',
-            () => {
-
-                image.remove();
-
-                imageWrapper.innerHTML = `
-                    <i class="
-                        fa-solid
-                        fa-image
-                        fa-3x
-                        text-muted
-                    "></i>
-                `;
-            }
-        );
+        image.addEventListener('error', () => {
+            image.remove();
+            imageWrapper.innerHTML = '<i class="fa-solid fa-image fa-3x text-muted"></i>';
+        });
 
         imageWrapper.appendChild(image);
-
     } else {
-
-        imageWrapper.innerHTML = `
-            <i class="
-                fa-solid
-                fa-image
-                fa-3x
-                text-muted
-            "></i>
-        `;
+        imageWrapper.innerHTML = '<i class="fa-solid fa-image fa-3x text-muted"></i>';
     }
 
+    const body = document.createElement('div');
+    body.className = 'card-body d-flex flex-column p-4';
 
-    /* =====================================================
-       CARD BODY
-    ====================================================== */
+    const category = document.createElement('small');
+    category.className = 'text-muted mb-2';
+    category.textContent = product.category;
 
-    const body =
-        document.createElement('div');
+    const title = document.createElement('h5');
+    title.className = 'card-title fw-bold';
+    title.textContent = product.name;
 
-    body.className =
-        'card-body d-flex flex-column p-4';
+    const description = document.createElement('p');
+    description.className = 'card-text text-muted small';
+    description.textContent = String(product.description || '')
+        .replace(/<[^>]+>/g, '')
+        .substring(0, 200);
 
+    const weight = document.createElement('small');
+    weight.className = 'text-muted mb-3';
+    weight.textContent = product.weight ? `Peso: ${product.weight}` : '';
 
-    const category =
-        document.createElement('small');
+    const footer = document.createElement('div');
+    footer.className = 'mt-auto pt-3 d-flex justify-content-between align-items-center';
 
-    category.className =
-        'text-muted mb-2';
+    const price = document.createElement('strong');
+    price.className = 'text-primary fs-5';
+    price.textContent = formatPrice(product.price);
 
-    category.textContent =
-        product.category;
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'btn btn-primary rounded-circle';
+    button.setAttribute('aria-label', `Adicionar ${product.name} ao carrinho`);
+    button.innerHTML = '<i class="fa-solid fa-plus"></i>';
 
-
-    const title =
-        document.createElement('h5');
-
-    title.className =
-        'card-title fw-bold';
-
-    title.textContent =
-        product.name;
-
-
-    const description =
-        document.createElement('p');
-
-    description.className =
-        'card-text text-muted small';
-
-    description.textContent =
-        product.description
-            .replace(/<[^>]+>/g, '')
-            .substring(0, 200);
-
-
-    const weight =
-        document.createElement('small');
-
-    weight.className =
-        'text-muted mb-3';
-
-    weight.textContent =
-        product.weight
-            ? `Peso: ${product.weight}`
-            : '';
-
-
-    const footer =
-        document.createElement('div');
-
-    footer.className =
-        `
-        mt-auto
-        pt-3
-        d-flex
-        justify-content-between
-        align-items-center
-        `;
-
-
-    const price =
-        document.createElement('strong');
-
-    price.className =
-        'text-primary fs-5';
-
-    price.textContent =
-        formatPrice(product.price);
-
-
-    const button =
-        document.createElement('button');
-
-    button.type =
-        'button';
-
-    button.className =
-        'btn btn-primary rounded-circle';
-
-    button.setAttribute(
-        'aria-label',
-        `Adicionar ${product.name} ao carrinho`
-    );
-
-    button.innerHTML =
-        '<i class="fa-solid fa-plus"></i>';
-
-
-    button.addEventListener(
-        'click',
-        () => {
-
-            if (
-                !isProductAvailable(product)
-            ) {
-
-                alert(
-                    'Este produto está sem estoque.'
-                );
-
-                return;
-            }
-
-            /*
-             * Evento público para o carrinho.
-             * O cart.js poderá escutar este evento.
-             */
-            document.dispatchEvent(
-                new CustomEvent(
-                    'catalog:add-to-cart',
-                    {
-                        detail: product
-                    }
-                )
-            );
-
-            console.log(
-                'Produto selecionado:',
-                product
-            );
+    button.addEventListener('click', () => {
+        if (!isProductAvailable(product)) {
+            alert('Este produto está sem estoque.');
+            return;
         }
-    );
 
+        document.dispatchEvent(
+            new CustomEvent('catalog:add-to-cart', { detail: product })
+        );
+
+        console.log('Produto selecionado:', product);
+    });
 
     footer.appendChild(price);
     footer.appendChild(button);
 
-
     body.appendChild(category);
     body.appendChild(title);
-
-    if (product.description) {
-        body.appendChild(description);
-    }
-
-    if (product.weight) {
-        body.appendChild(weight);
-    }
-
+    if (product.description) body.appendChild(description);
+    if (product.weight) body.appendChild(weight);
     body.appendChild(footer);
-
 
     article.appendChild(imageWrapper);
     article.appendChild(body);
-
     column.appendChild(article);
-
 
     return column;
 }
-
 
 /* =========================================================
    RENDERIZAÇÃO
 ========================================================= */
 
 function renderProducts() {
+    const grid = document.getElementById('product-grid');
+    if (!grid) return;
 
-    const grid =
-        document.getElementById(
-            'product-grid'
-        );
-
-    if (!grid) {
-        return;
-    }
-
-
-    const products =
-        getFilteredProducts();
-
-
+    const products = getFilteredProducts();
     grid.innerHTML = '';
 
-
     if (products.length === 0) {
-
         grid.innerHTML = `
             <div class="col-12">
-
                 <div class="text-center py-5">
-
-                    <i class="
-                        fa-solid
-                        fa-box-open
-                        fa-3x
-                        text-muted
-                        mb-3
-                    "></i>
-
-                    <h4>
-                        Nenhum produto encontrado
-                    </h4>
-
+                    <i class="fa-solid fa-box-open fa-3x text-muted mb-3"></i>
+                    <h4>Nenhum produto encontrado</h4>
                 </div>
-
             </div>
         `;
-
         return;
     }
 
-
-    const fragment =
-        document.createDocumentFragment();
-
-
-    products.forEach(
-        product => {
-
-            fragment.appendChild(
-                createProductCard(
-                    product
-                )
-            );
-
-        }
-    );
-
+    const fragment = document.createDocumentFragment();
+    products.forEach(product => {
+        fragment.appendChild(createProductCard(product));
+    });
 
     grid.appendChild(fragment);
-
 }
-
 
 /* =========================================================
    CARREGAMENTO DO CATÁLOGO
 ========================================================= */
 
 async function loadCatalog() {
-
-    const grid =
-        document.getElementById(
-            'product-grid'
-        );
-
-    if (!grid) {
-        return;
-    }
-
+    const grid = document.getElementById('product-grid');
+    if (!grid) return;
 
     grid.innerHTML = `
         <div class="col-12">
-
             <div class="text-center py-5">
-
-                <div
-                    class="spinner-border text-primary mb-3"
-                    role="status"
-                >
-                    <span class="visually-hidden">
-                        Carregando produtos...
-                    </span>
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Carregando produtos...</span>
                 </div>
-
-                <p class="text-muted mb-0">
-                    Carregando catálogo...
-                </p>
-
+                <p class="text-muted mb-0">Carregando catálogo...</p>
             </div>
-
         </div>
     `;
 
-
     try {
+        console.log(`Carregando catálogo: ${CATALOG_PATH}`);
 
-        console.log(
-            `Carregando catálogo: ${CATALOG_PATH}`
+        const response = await fetch(CATALOG_PATH, { cache: 'no-cache' });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const csvText = await response.text();
+        const rows = parseCSV(csvText);
+
+        catalogProducts = rows.map((product, index) => normalizeProduct(product, index));
+
+        console.log(`✓ ${catalogProducts.length} produtos carregados`);
+
+        console.table(
+            catalogProducts.map(product => ({
+                SKU: product.sku,
+                Produto: product.name,
+                'Preço CSV': product.priceRaw,
+                'Preço numérico': product.price,
+                'Preço exibido': formatPrice(product.price)
+            }))
         );
-
-
-        const response =
-            await fetch(
-                CATALOG_PATH,
-                {
-                    cache: 'no-cache'
-                }
-            );
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                `HTTP ${response.status}`
-            );
-
-        }
-
-
-        const csvText =
-            await response.text();
-
-
-        const rows =
-            parseCSV(csvText);
-
-
-        catalogProducts =
-            rows.map(
-                (product, index) =>
-                    normalizeProduct(
-                        product,
-                        index
-                    )
-            );
-
-
-        console.log(
-            `✓ ${catalogProducts.length} produtos carregados`
-        );
-
 
         renderCategoryFilters();
-
         renderProducts();
-
-
     } catch (error) {
-
-        console.error(
-            'Erro ao carregar catálogo:',
-            error
-        );
-
+        console.error('Erro ao carregar catálogo:', error);
 
         grid.innerHTML = `
             <div class="col-12">
-
-                <div class="
-                    alert
-                    alert-danger
-                    text-center
-                ">
-
-                    <i class="
-                        fa-solid
-                        fa-triangle-exclamation
-                        me-2
-                    "></i>
-
+                <div class="alert alert-danger text-center">
+                    <i class="fa-solid fa-triangle-exclamation me-2"></i>
                     Não foi possível carregar o catálogo.
-
                     <br>
-
-                    <small>
-                        Fonte:
-                        <strong>
-                            resources/catalogo.csv
-                        </strong>
-                    </small>
-
+                    <small>Fonte: <strong>resources/catalogo.csv</strong></small>
                 </div>
-
             </div>
         `;
     }
 }
-
 
 /* =========================================================
    API PÚBLICA
 ========================================================= */
 
 window.catalog = {
-
     getProducts() {
         return [...catalogProducts];
     },
 
     getProductBySKU(sku) {
-
-        return catalogProducts.find(
-            product =>
-                product.sku === sku
-        ) || null;
-
+        return catalogProducts.find(product => product.sku === sku) || null;
     },
 
     getCategories() {
-        return getCategories(
-            catalogProducts
-        );
+        return getCategories(catalogProducts);
     },
 
     reload() {
         return loadCatalog();
     }
-
 };
-
 
 /* =========================================================
    INICIALIZAÇÃO
 ========================================================= */
 
-document.addEventListener(
-    'DOMContentLoaded',
-    loadCatalog
-);
+document.addEventListener('DOMContentLoaded', loadCatalog);
