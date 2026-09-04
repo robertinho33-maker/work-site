@@ -1,371 +1,135 @@
-'use strict';
+import { db } from "./firebase-config.js";
+import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-const CART_STORAGE_KEY = 'fiosperfeitos_cart';
-
-let cart = loadCart();
-
-/* =========================================================
-   UTILITÁRIOS
-========================================================= */
-
-function money(value) {
-    const number = Number(value || 0);
-
-    return number.toLocaleString('pt-BR', {
-        style: 'currency',
-        currency: 'BRL'
-    });
-}
-
-function escapeHTML(value) {
-    return String(value ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-}
-
-/* =========================================================
-   PERSISTÊNCIA
-========================================================= */
-
-function loadCart() {
+// Função acionada ao finalizar a compra
+async function createOrderAndCommission(orderData, appliedCoupon) {
     try {
-        const stored = localStorage.getItem(CART_STORAGE_KEY);
-
-        if (!stored) return [];
-
-        const parsed = JSON.parse(stored);
-
-        if (!Array.isArray(parsed)) return [];
-
-        return parsed.filter(item =>
-            item &&
-            typeof item.sku === 'string' &&
-            Number(item.price) > 0 &&
-            Number(item.quantity) > 0
-        );
-    } catch (error) {
-        console.error('[CARRINHO] Erro ao carregar:', error);
-        return [];
-    }
-}
-
-function saveCart() {
-    try {
-        localStorage.setItem(
-            CART_STORAGE_KEY,
-            JSON.stringify(cart)
-        );
-    } catch (error) {
-        console.error('[CARRINHO] Erro ao salvar:', error);
-    }
-}
-
-/* =========================================================
-   CÁLCULOS
-========================================================= */
-
-function getCartCount() {
-    return cart.reduce(
-        (total, item) => total + Number(item.quantity || 0),
-        0
-    );
-}
-
-function getCartSubtotal() {
-    return cart.reduce(
-        (total, item) =>
-            total +
-            Number(item.price || 0) *
-            Number(item.quantity || 0),
-        0
-    );
-}
-
-/* =========================================================
-   ADICIONAR
-========================================================= */
-
-function addToCart(product) {
-    if (!product || !product.sku) {
-        console.error('[CARRINHO] Produto inválido:', product);
-        return;
-    }
-
-    const existing = cart.find(
-        item => item.sku === product.sku
-    );
-
-    if (existing) {
-        existing.quantity += 1;
-    } else {
-        cart.push({
-            id: product.id,
-            sku: product.sku,
-            name: product.name,
-            price: Number(product.price || 0),
-            weight: product.weight || '',
-            category: product.category || '',
-            image: product.image || '',
-            quantity: 1
+        // 1. Salva o pedido
+        const orderRef = await addDoc(collection(db, "orders"), {
+            ...orderData,
+            createdAt: serverTimestamp()
         });
-    }
 
-    saveCart();
-    renderCart();
+        // 2. Se houver cupom com comissão (> 0), lança o registro em 'commissions'
+        if (appliedCoupon && Number(appliedCoupon.commissionPercent) > 0) {
+            const commissionValue = (Number(orderData.totalAmount) * Number(appliedCoupon.commissionPercent)) / 100;
 
-    console.log('[CARRINHO] Produto adicionado:', product.name);
-}
-
-/* =========================================================
-   QUANTIDADE
-========================================================= */
-
-function changeQuantity(sku, delta) {
-    const item = cart.find(
-        product => product.sku === sku
-    );
-
-    if (!item) return;
-
-    item.quantity += delta;
-
-    if (item.quantity <= 0) {
-        cart = cart.filter(
-            product => product.sku !== sku
-        );
-    }
-
-    saveCart();
-    renderCart();
-}
-
-function removeFromCart(sku) {
-    cart = cart.filter(
-        product => product.sku !== sku
-    );
-
-    saveCart();
-    renderCart();
-}
-
-function clearCart() {
-    cart = [];
-
-    saveCart();
-    renderCart();
-}
-
-/* =========================================================
-   RENDERIZAÇÃO
-========================================================= */
-
-function renderCart() {
-    const container = document.getElementById('cart-items');
-    const badge = document.getElementById('cart-badge-count');
-    const subtotalElement = document.getElementById('cart-subtotal');
-    const discountElement = document.getElementById('cart-discount');
-    const totalElement = document.getElementById('cart-total');
-
-    const count = getCartCount();
-    const subtotal = getCartSubtotal();
-
-    if (badge) {
-        badge.textContent = count;
-    }
-
-    if (subtotalElement) {
-        subtotalElement.textContent = money(subtotal);
-    }
-
-    if (discountElement) {
-        discountElement.textContent = '- R$ 0,00';
-    }
-
-    if (totalElement) {
-        totalElement.textContent = money(subtotal);
-    }
-
-    if (!container) return;
-
-    if (cart.length === 0) {
-        container.innerHTML = `
-            <div class="text-center text-muted py-5">
-                <i class="fa-solid fa-bag-shopping fa-2x mb-3"></i>
-                <p class="mb-0">
-                    Seu carrinho está vazio.
-                </p>
-            </div>
-        `;
-
-        return;
-    }
-
-    container.innerHTML = cart.map(item => `
-        <div class="border-bottom pb-3 mb-3">
-
-            <div class="d-flex gap-3">
-
-                ${
-                    item.image
-                        ? `
-                            <img
-                                src="${escapeHTML(item.image)}"
-                                alt="${escapeHTML(item.name)}"
-                                width="70"
-                                height="70"
-                                class="rounded"
-                                style="object-fit: contain;"
-                            >
-                        `
-                        : `
-                            <div
-                                class="rounded bg-light d-flex align-items-center justify-content-center"
-                                style="width:70px;height:70px;"
-                            >
-                                <i class="fa-solid fa-image text-muted"></i>
-                            </div>
-                        `
-                }
-
-                <div class="flex-grow-1">
-
-                    <div class="fw-semibold">
-                        ${escapeHTML(item.name)}
-                    </div>
-
-                    <small class="text-muted">
-                        ${money(item.price)}
-                    </small>
-
-                    <div class="d-flex align-items-center gap-2 mt-2">
-
-                        <button
-                            type="button"
-                            class="btn btn-sm btn-outline-secondary"
-                            data-cart-minus="${escapeHTML(item.sku)}"
-                            aria-label="Diminuir quantidade"
-                        >
-                            -
-                        </button>
-
-                        <span class="fw-bold">
-                            ${item.quantity}
-                        </span>
-
-                        <button
-                            type="button"
-                            class="btn btn-sm btn-outline-secondary"
-                            data-cart-plus="${escapeHTML(item.sku)}"
-                            aria-label="Aumentar quantidade"
-                        >
-                            +
-                        </button>
-
-                        <button
-                            type="button"
-                            class="btn btn-sm btn-outline-danger ms-auto"
-                            data-cart-remove="${escapeHTML(item.sku)}"
-                            aria-label="Remover produto"
-                        >
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-    `).join('');
-}
-
-/* =========================================================
-   EVENTOS
-========================================================= */
-
-document.addEventListener(
-    'catalog:add-to-cart',
-    event => {
-        addToCart(event.detail);
-    }
-);
-
-document.addEventListener(
-    'click',
-    event => {
-
-        const plus = event.target.closest(
-            '[data-cart-plus]'
-        );
-
-        if (plus) {
-            changeQuantity(
-                plus.dataset.cartPlus,
-                1
-            );
-            return;
+            await addDoc(collection(db, "commissions"), {
+                orderId: orderRef.id,
+                influencerId: appliedCoupon.influencerId || null,
+                affiliateName: appliedCoupon.affiliateName || "Geral",
+                code: appliedCoupon.code,
+                orderTotal: Number(orderData.totalAmount),
+                commissionPercent: Number(appliedCoupon.commissionPercent),
+                commissionValue: commissionValue,
+                payoutStatus: "Pendente",
+                createdAt: serverTimestamp()
+            });
         }
 
-        const minus = event.target.closest(
-            '[data-cart-minus]'
-        );
+        alert("Pedido concluído com sucesso!");
+    } catch (error) {
+        console.error("Erro ao processar pedido e comissão:", error);
+    }
+    import { db } from "./firebase-config.js";
+import { 
+    doc, getDoc, addDoc, collection, runTransaction, serverTimestamp 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        if (minus) {
-            changeQuantity(
-                minus.dataset.cartMinus,
-                -1
-            );
-            return;
+// Estado local do carrinho e cupom
+let currentCoupon = null;
+
+// 1. Validação do Cupom no Checkout
+export async function applyCouponCode(couponCode) {
+    const code = couponCode.trim().toUpperCase();
+    if (!code) return { success: false, message: "Digite um cupom." };
+
+    try {
+        const couponRef = doc(db, "coupons", code);
+        const couponSnap = await getDoc(couponRef);
+
+        if (!couponSnap.exists() || !couponSnap.data().active) {
+            return { success: false, message: "Cupom inválido ou expirado." };
         }
 
-        const remove = event.target.closest(
-            '[data-cart-remove]'
-        );
+        currentCoupon = { id: couponSnap.id, ...couponSnap.data() };
+        return { success: true, coupon: currentCoupon };
+    } catch (error) {
+        console.error("Erro ao aplicar cupom:", error);
+        return { success: false, message: "Erro ao validar cupom." };
+    }
+}
 
-        if (remove) {
-            removeFromCart(
-                remove.dataset.cartRemove
-            );
+// 2. Processamento do Pedido com Gerador de Número Sequencial + Comissão
+export async function processCheckoutOrder(customerData, cartItems, subtotal) {
+    try {
+        // Aplica o desconto se houver cupom ativo
+        let discount = 0;
+        if (currentCoupon) {
+            discount = currentCoupon.type === "percent" 
+                ? (subtotal * currentCoupon.value) / 100 
+                : currentCoupon.value;
         }
+        const totalAmount = Math.max(0, subtotal - discount);
+
+        // Executa em transação para garantir número sequencial sem conflito
+        const orderId = await runTransaction(db, async (transaction) => {
+            const counterRef = doc(db, "counters", "orders");
+            const counterSnap = await transaction.get(counterRef);
+
+            let nextNumber = 1000;
+            if (counterSnap.exists()) {
+                nextNumber = (counterSnap.data().current || 1000) + 1;
+            }
+
+            transaction.set(counterRef, { current: nextNumber }, { merge: true });
+            return nextNumber.toString();
+        });
+
+        // Grava o Pedido na coleção 'orders'
+        const orderData = {
+            orderNumber: orderId,
+            customer: customerData,
+            items: cartItems,
+            subtotal,
+            discount,
+            totalAmount,
+            coupon: currentCoupon ? {
+                code: currentCoupon.code,
+                influencerId: currentCoupon.influencerId || null,
+                commissionPercent: currentCoupon.commissionPercent || 0
+            } : null,
+            status: "Pendente",
+            createdAt: serverTimestamp()
+        };
+
+        const orderRef = await addDoc(collection(db, "orders"), orderData);
+
+        // Se houver comissão associada ao cupom, gera a comissão na coleção 'commissions'
+        if (currentCoupon && Number(currentCoupon.commissionPercent) > 0) {
+            const commissionValue = (totalAmount * Number(currentCoupon.commissionPercent)) / 100;
+
+            await addDoc(collection(db, "commissions"), {
+                orderId: orderRef.id,
+                orderNumber: orderId,
+                influencerId: currentCoupon.influencerId || null,
+                affiliateName: currentCoupon.affiliateName || "Geral",
+                code: currentCoupon.code,
+                orderTotal: totalAmount,
+                commissionPercent: Number(currentCoupon.commissionPercent),
+                commissionValue: commissionValue,
+                payoutStatus: "Pendente",
+                createdAt: serverTimestamp()
+            });
+        }
+
+        // Limpa o cupom atual
+        currentCoupon = null;
+        return { success: true, orderId: orderRef.id, orderNumber: orderId };
+
+    } catch (error) {
+        console.error("Erro no processamento do checkout:", error);
+        return { success: false, message: error.message };
     }
-);
-
-/* =========================================================
-   API
-========================================================= */
-
-window.cart = {
-    getItems() {
-        return cart.map(item => ({ ...item }));
-    },
-
-    getCount() {
-        return getCartCount();
-    },
-
-    getSubtotal() {
-        return getCartSubtotal();
-    },
-
-    clear() {
-        clearCart();
-    },
-
-    refresh() {
-        cart = loadCart();
-        renderCart();
-    }
-};
-
-/* =========================================================
-   INICIALIZAÇÃO
-========================================================= */
-
-document.addEventListener(
-    'DOMContentLoaded',
-    renderCart
-);
+}
+}
