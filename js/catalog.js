@@ -26,6 +26,7 @@ function parsePrice(value) {
     if (value === null || value === undefined) return 0;
 
     let text = String(value).trim();
+
     if (!text) return 0;
 
     text = text
@@ -39,37 +40,69 @@ function parsePrice(value) {
     const hasComma = text.includes(',');
     const hasDot = text.includes('.');
 
+    /*
+     * Formato brasileiro:
+     * 64,9      -> 64.90
+     * 49,2      -> 49.20
+     * 13,14     -> 13.14
+     * 4.290,00  -> 4290.00
+     */
     if (hasComma) {
-        text = text.replace(/\./g, '').replace(',', '.');
+        text = text
+            .replace(/\./g, '')
+            .replace(',', '.');
+
         const number = Number(text);
+
         return Number.isFinite(number) ? number : 0;
     }
 
+    /*
+     * Formato decimal com ponto:
+     * 64.90 -> 64.90
+     * 42.90 -> 42.90
+     */
     if (hasDot) {
         const parts = text.split('.');
-        if (parts.length === 2 && parts[1].length === 2) {
+
+        /*
+         * Mais de um ponto:
+         * 1.234.56
+         * Remove separadores de milhar.
+         */
+        if (parts.length > 2) {
+            text = text.replace(/\./g, '');
+
             const number = Number(text);
+
             return Number.isFinite(number) ? number : 0;
         }
 
-        const normalized = text.replace(/\./g, '');
-        const number = Number(normalized);
-
-        if (Number.isFinite(number) && Number.isInteger(number) && number >= 100) {
-            return number / 100;
-        }
+        /*
+         * Um ponto:
+         * mantém como decimal.
+         */
+        const number = Number(text);
 
         return Number.isFinite(number) ? number : 0;
     }
 
+    /*
+     * Número inteiro:
+     *
+     * 80   -> 80
+     * 100  -> 100
+     * 120  -> 120
+     * 149  -> 149
+     * 200  -> 200
+     * 500  -> 500
+     * 1260 -> 1260
+     *
+     * NÃO dividir por 100.
+     */
     const number = Number(text);
-    if (!Number.isFinite(number)) return 0;
 
-    if (Number.isInteger(number) && number >= 100) {
-        return number / 100;
-    }
-
-    return number;
+    return Number.isFinite(number) ? number : 0;
 }
 
 function formatPrice(value) {
