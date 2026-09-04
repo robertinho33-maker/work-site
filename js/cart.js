@@ -4,6 +4,10 @@ const CART_STORAGE_KEY = 'fiosperfeitos_cart';
 
 let cart = loadCart();
 
+/* =========================================================
+   UTILITÁRIOS
+========================================================= */
+
 function money(value) {
     const number = Number(value || 0);
 
@@ -22,19 +26,19 @@ function escapeHTML(value) {
         .replace(/'/g, '&#039;');
 }
 
+/* =========================================================
+   PERSISTÊNCIA
+========================================================= */
+
 function loadCart() {
     try {
         const stored = localStorage.getItem(CART_STORAGE_KEY);
 
-        if (!stored) {
-            return [];
-        }
+        if (!stored) return [];
 
         const parsed = JSON.parse(stored);
 
-        if (!Array.isArray(parsed)) {
-            return [];
-        }
+        if (!Array.isArray(parsed)) return [];
 
         return parsed.filter(item =>
             item &&
@@ -42,7 +46,6 @@ function loadCart() {
             Number(item.price) > 0 &&
             Number(item.quantity) > 0
         );
-
     } catch (error) {
         console.error('[CARRINHO] Erro ao carregar:', error);
         return [];
@@ -55,16 +58,18 @@ function saveCart() {
             CART_STORAGE_KEY,
             JSON.stringify(cart)
         );
-
     } catch (error) {
         console.error('[CARRINHO] Erro ao salvar:', error);
     }
 }
 
+/* =========================================================
+   CÁLCULOS
+========================================================= */
+
 function getCartCount() {
     return cart.reduce(
-        (total, item) =>
-            total + Number(item.quantity || 0),
+        (total, item) => total + Number(item.quantity || 0),
         0
     );
 }
@@ -79,14 +84,51 @@ function getCartSubtotal() {
     );
 }
 
-function addToCart(product) {
+/* =========================================================
+   CONTROLE DO CHECKOUT
+========================================================= */
 
+function updateCheckoutButton() {
+    const checkoutButtons = document.querySelectorAll(
+        '[data-cart-checkout], #btn-checkout, #checkout-button, a[href="checkout.html"]'
+    );
+
+    const hasItems = cart.length > 0;
+
+    checkoutButtons.forEach(button => {
+        if (button.tagName === 'A') {
+            if (!hasItems) {
+                button.dataset.checkoutDisabled = 'true';
+                button.setAttribute('aria-disabled', 'true');
+                button.classList.add('disabled');
+            } else {
+                delete button.dataset.checkoutDisabled;
+                button.removeAttribute('aria-disabled');
+                button.classList.remove('disabled');
+            }
+        } else {
+            button.disabled = !hasItems;
+        }
+    });
+}
+
+/* =========================================================
+   ADICIONAR
+========================================================= */
+
+function addToCart(product) {
     if (!product || !product.sku) {
+        console.error('[CARRINHO] Produto inválido:', product);
+        return;
+    }
+
+    const price = Number(product.price || 0);
+
+    if (!Number.isFinite(price) || price <= 0) {
         console.error(
-            '[CARRINHO] Produto inválido:',
+            '[CARRINHO] Produto sem preço válido:',
             product
         );
-
         return;
     }
 
@@ -95,16 +137,13 @@ function addToCart(product) {
     );
 
     if (existing) {
-
         existing.quantity += 1;
-
     } else {
-
         cart.push({
             id: product.id,
             sku: product.sku,
             name: product.name,
-            price: Number(product.price || 0),
+            price,
             weight: product.weight || '',
             category: product.category || '',
             image: product.image || '',
@@ -121,20 +160,20 @@ function addToCart(product) {
     );
 }
 
-function changeQuantity(sku, delta) {
+/* =========================================================
+   QUANTIDADE
+========================================================= */
 
+function changeQuantity(sku, delta) {
     const item = cart.find(
         product => product.sku === sku
     );
 
-    if (!item) {
-        return;
-    }
+    if (!item) return;
 
     item.quantity += delta;
 
     if (item.quantity <= 0) {
-
         cart = cart.filter(
             product => product.sku !== sku
         );
@@ -145,7 +184,6 @@ function changeQuantity(sku, delta) {
 }
 
 function removeFromCart(sku) {
-
     cart = cart.filter(
         product => product.sku !== sku
     );
@@ -155,29 +193,22 @@ function removeFromCart(sku) {
 }
 
 function clearCart() {
-
     cart = [];
 
     saveCart();
     renderCart();
 }
 
+/* =========================================================
+   RENDERIZAÇÃO
+========================================================= */
+
 function renderCart() {
-
-    const container =
-        document.getElementById('cart-items');
-
-    const badge =
-        document.getElementById('cart-badge-count');
-
-    const subtotalElement =
-        document.getElementById('cart-subtotal');
-
-    const discountElement =
-        document.getElementById('cart-discount');
-
-    const totalElement =
-        document.getElementById('cart-total');
+    const container = document.getElementById('cart-items');
+    const badge = document.getElementById('cart-badge-count');
+    const subtotalElement = document.getElementById('cart-subtotal');
+    const discountElement = document.getElementById('cart-discount');
+    const totalElement = document.getElementById('cart-total');
 
     const count = getCartCount();
     const subtotal = getCartSubtotal();
@@ -198,168 +229,187 @@ function renderCart() {
         totalElement.textContent = money(subtotal);
     }
 
-    if (!container) {
-        return;
-    }
+    if (container) {
+        if (cart.length === 0) {
+            container.innerHTML = `
+                <div class="text-center text-muted py-5">
+                    <i class="fa-solid fa-bag-shopping fa-2x mb-3"></i>
 
-    if (cart.length === 0) {
+                    <p class="mb-0">
+                        Seu carrinho está vazio.
+                    </p>
+                </div>
+            `;
+        } else {
+            container.innerHTML = cart.map(item => `
+                <div class="border-bottom pb-3 mb-3">
 
-        container.innerHTML = `
-            <div class="text-center text-muted py-5">
+                    <div class="d-flex gap-3">
 
-                <i class="fa-solid fa-bag-shopping fa-2x mb-3"></i>
+                        ${
+                            item.image
+                                ? `
+                                    <img
+                                        src="${escapeHTML(item.image)}"
+                                        alt="${escapeHTML(item.name)}"
+                                        width="70"
+                                        height="70"
+                                        class="rounded"
+                                        style="object-fit: contain;"
+                                    >
+                                `
+                                : `
+                                    <div
+                                        class="rounded bg-light d-flex align-items-center justify-content-center"
+                                        style="width:70px;height:70px;"
+                                    >
+                                        <i class="fa-solid fa-image text-muted"></i>
+                                    </div>
+                                `
+                        }
 
-                <p class="mb-0">
-                    Seu carrinho está vazio.
-                </p>
+                        <div class="flex-grow-1">
 
-            </div>
-        `;
-
-        return;
-    }
-
-    container.innerHTML = cart.map(item => `
-
-        <div class="border-bottom pb-3 mb-3">
-
-            <div class="d-flex gap-3">
-
-                ${
-                    item.image
-                        ? `
-                            <img
-                                src="${escapeHTML(item.image)}"
-                                alt="${escapeHTML(item.name)}"
-                                width="70"
-                                height="70"
-                                class="rounded"
-                                style="object-fit: contain;"
-                            >
-                        `
-                        : `
-                            <div
-                                class="rounded bg-light d-flex align-items-center justify-content-center"
-                                style="width:70px;height:70px;"
-                            >
-                                <i class="fa-solid fa-image text-muted"></i>
+                            <div class="fw-semibold">
+                                ${escapeHTML(item.name)}
                             </div>
-                        `
-                }
 
-                <div class="flex-grow-1">
+                            <small class="text-muted">
+                                ${money(item.price)}
+                            </small>
 
-                    <div class="fw-semibold">
-                        ${escapeHTML(item.name)}
-                    </div>
+                            <div class="d-flex align-items-center gap-2 mt-2">
 
-                    <small class="text-muted">
-                        ${money(item.price)}
-                    </small>
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-outline-secondary"
+                                    data-cart-minus="${escapeHTML(item.sku)}"
+                                    aria-label="Diminuir quantidade"
+                                >
+                                    -
+                                </button>
 
-                    <div class="d-flex align-items-center gap-2 mt-2">
+                                <span class="fw-bold">
+                                    ${item.quantity}
+                                </span>
 
-                        <button
-                            type="button"
-                            class="btn btn-sm btn-outline-secondary"
-                            data-cart-minus="${escapeHTML(item.sku)}"
-                            aria-label="Diminuir quantidade"
-                        >
-                            -
-                        </button>
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-outline-secondary"
+                                    data-cart-plus="${escapeHTML(item.sku)}"
+                                    aria-label="Aumentar quantidade"
+                                >
+                                    +
+                                </button>
 
-                        <span class="fw-bold">
-                            ${item.quantity}
-                        </span>
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-outline-danger ms-auto"
+                                    data-cart-remove="${escapeHTML(item.sku)}"
+                                    aria-label="Remover produto"
+                                >
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
 
-                        <button
-                            type="button"
-                            class="btn btn-sm btn-outline-secondary"
-                            data-cart-plus="${escapeHTML(item.sku)}"
-                            aria-label="Aumentar quantidade"
-                        >
-                            +
-                        </button>
+                            </div>
 
-                        <button
-                            type="button"
-                            class="btn btn-sm btn-outline-danger ms-auto"
-                            data-cart-remove="${escapeHTML(item.sku)}"
-                            aria-label="Remover produto"
-                        >
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
+                        </div>
 
                     </div>
 
                 </div>
+            `).join('');
+        }
+    }
 
-            </div>
-
-        </div>
-
-    `).join('');
+    updateCheckoutButton();
 }
 
+/* =========================================================
+   BLOQUEIO DE NAVEGAÇÃO PARA CHECKOUT VAZIO
+========================================================= */
+
+document.addEventListener(
+    'click',
+    event => {
+        const checkoutButton = event.target.closest(
+            '[data-cart-checkout], #btn-checkout, #checkout-button, a[href="checkout.html"]'
+        );
+
+        if (!checkoutButton) return;
+
+        if (cart.length === 0) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            console.warn(
+                '[CARRINHO] Checkout bloqueado: carrinho vazio.'
+            );
+
+            renderCart();
+
+            return;
+        }
+    },
+    true
+);
+
+/* =========================================================
+   EVENTOS DO CARRINHO
+========================================================= */
 
 document.addEventListener(
     'catalog:add-to-cart',
     event => {
-
         addToCart(event.detail);
-
     }
 );
-
 
 document.addEventListener(
     'click',
     event => {
 
-        const plus =
-            event.target.closest('[data-cart-plus]');
+        const plus = event.target.closest(
+            '[data-cart-plus]'
+        );
 
         if (plus) {
-
             changeQuantity(
                 plus.dataset.cartPlus,
                 1
             );
-
             return;
         }
 
-
-        const minus =
-            event.target.closest('[data-cart-minus]');
+        const minus = event.target.closest(
+            '[data-cart-minus]'
+        );
 
         if (minus) {
-
             changeQuantity(
                 minus.dataset.cartMinus,
                 -1
             );
-
             return;
         }
 
-
-        const remove =
-            event.target.closest('[data-cart-remove]');
+        const remove = event.target.closest(
+            '[data-cart-remove]'
+        );
 
         if (remove) {
-
             removeFromCart(
                 remove.dataset.cartRemove
             );
         }
-
     }
 );
 
+/* =========================================================
+   API PÚBLICA
+========================================================= */
 
 window.cart = {
-
     getItems() {
         return cart.map(item => ({ ...item }));
     },
@@ -372,20 +422,31 @@ window.cart = {
         return getCartSubtotal();
     },
 
+    isEmpty() {
+        return cart.length === 0;
+    },
+
+    hasItems() {
+        return cart.length > 0;
+    },
+
     clear() {
         clearCart();
     },
 
     refresh() {
-
         cart = loadCart();
-
         renderCart();
     }
 };
 
+/* =========================================================
+   INICIALIZAÇÃO
+========================================================= */
 
 document.addEventListener(
     'DOMContentLoaded',
-    renderCart
+    () => {
+        renderCart();
+    }
 );
