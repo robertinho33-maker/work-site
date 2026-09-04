@@ -1,686 +1,377 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 
 <head>
     <meta charset="utf-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+```
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-    <meta
-        name="keywords"
-        content="Shine Express, Ecobelle, produtos para cabelo, cosméticos profissionais, salão de beleza, tratamento capilar"
-    >
+<meta
+    name="keywords"
+    content="Shine Express, Ecobelle, produtos para cabelo, cosméticos profissionais, salão de beleza, tratamento capilar"
+>
 
-    <meta
-        name="description"
-        content="Linha profissional Shine Express & Ecobelle para salões de beleza e cuidados em casa."
-    >
+<meta
+    name="description"
+    content="Linha profissional Shine Express & Ecobelle para salões de beleza e cuidados em casa."
+>
 
-    <meta
-        name="theme-color"
-        content="#ffffff"
-    >
+<meta
+    name="theme-color"
+    content="#ffffff"
+>
 
-    <title>Shine Express & Ecobelle - Loja Oficial</title>
+<title>Shine Express & Ecobelle - Loja Oficial</title>
 
-    <!-- =========================================================
-         FAVICON
-    ========================================================== -->
+<!-- FAVICON -->
+<link
+    rel="icon"
+    href="img/favicon.ico"
+>
 
-    <link
-        rel="icon"
-        href="img/favicon.ico"
-    >
+<!-- GOOGLE FONTS -->
+<link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+>
 
+<link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+>
 
-    <!-- =========================================================
-         GOOGLE FONTS
-    ========================================================== -->
+<link
+    href="https://fonts.googleapis.com/css2?family=Dancing+Script&family=Playfair+Display:wght@500&family=Work+Sans:wght@400;600;700;800&display=swap"
+    rel="stylesheet"
+>
 
-    <link
-        rel="preconnect"
-        href="https://fonts.googleapis.com"
-    >
+<!-- BOOTSTRAP CSS -->
+<link
+    href="css/bootstrap.min.css"
+    rel="stylesheet"
+>
 
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin
-    >
+<!-- FONT AWESOME -->
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+>
 
-    <link
-        href="https://fonts.googleapis.com/css2?family=Dancing+Script&family=Playfair+Display:wght@500&family=Work+Sans:wght@400;600;700;800&display=swap"
-        rel="stylesheet"
-    >
+<!-- CSS PRINCIPAL -->
+<link
+    href="css/style.css"
+    rel="stylesheet"
+>
 
+<!-- ESTILOS DO CATÁLOGO E CARRINHO -->
+<style>
 
-    <!-- =========================================================
-         BOOTSTRAP CSS
-    ========================================================== -->
+    #product-grid {
+        min-height: 220px;
+    }
 
-    <link
-        href="css/bootstrap.min.css"
-        rel="stylesheet"
-    >
+    .product-card {
+        height: 100%;
+        border: 0;
+        border-radius: 18px;
+        overflow: hidden;
+        background: #ffffff;
 
+        box-shadow:
+            0 8px 25px rgba(0, 0, 0, 0.08);
 
-    <!-- =========================================================
-         FONT AWESOME
-    ========================================================== -->
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
 
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    >
+    .product-card:hover {
+        transform: translateY(-5px);
 
+        box-shadow:
+            0 15px 35px rgba(0, 0, 0, 0.12);
+    }
 
-    <!-- =========================================================
-         CSS PRINCIPAL DO PROJETO
-    ========================================================== -->
+    .product-image-wrapper {
+        width: 100%;
+        height: 280px;
 
-    <link
-        href="css/style.css"
-        rel="stylesheet"
-    >
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
+        background: #f8f8f8;
 
-    <!-- =========================================================
-         ESTILOS ESPECÍFICOS DO CATÁLOGO
-    ========================================================== -->
+        overflow: hidden;
+    }
 
-    <style>
+    .product-image-wrapper img {
+        width: 100%;
+        height: 100%;
 
-        /* =====================================================
-           ESTRUTURA DO CATÁLOGO
-        ====================================================== */
+        object-fit: contain;
 
-        #product-grid {
-            min-height: 220px;
-        }
+        padding: 20px;
 
+        transition:
+            transform 0.25s ease;
+    }
 
-        .product-card {
-            height: 100%;
-            border: 0;
-            border-radius: 18px;
-            overflow: hidden;
-            background: #ffffff;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    .product-card:hover
+    .product-image-wrapper img {
+        transform: scale(1.04);
+    }
 
-            transition:
-                transform 0.2s ease,
-                box-shadow 0.2s ease;
-        }
+    .category-button {
+        border-radius: 30px;
+    }
 
+    .catalog-message {
+        padding: 50px 20px;
 
-        .product-card:hover {
-            transform: translateY(-5px);
+        text-align: center;
 
-            box-shadow:
-                0 15px 35px rgba(0, 0, 0, 0.12);
-        }
+        border-radius: 16px;
 
+        background: #f8f9fa;
+    }
+
+    .product-title {
+        min-height: 48px;
+    }
+
+    .product-description {
+        min-height: 72px;
+    }
+
+    .product-stock {
+        font-size: 0.8rem;
+    }
+
+    .product-sku {
+        font-size: 0.75rem;
+        color: #6c757d;
+    }
+
+    #site-header,
+    #site-footer {
+        width: 100%;
+    }
+
+    /* BOTÃO FLUTUANTE DO CARRINHO */
+
+    .cart-floating-button {
+        z-index: 1050;
+
+        width: 60px;
+        height: 60px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .badge-cart {
+        position: absolute;
+
+        top: -3px;
+        right: -3px;
+
+        min-width: 24px;
+        height: 24px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 0 6px;
+
+        border-radius: 50%;
+
+        font-size: 0.75rem;
+        font-weight: 700;
+
+        background: #dc3545;
+        color: #ffffff;
+    }
+
+    @media (max-width: 767.98px) {
 
         .product-image-wrapper {
-            width: 100%;
-            height: 280px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            background: #f8f8f8;
-
-            overflow: hidden;
+            height: 240px;
         }
 
+    }
 
-        .product-image-wrapper img {
-            width: 100%;
-            height: 100%;
-
-            object-fit: contain;
-
-            padding: 20px;
-
-            transition:
-                transform 0.25s ease;
-        }
-
-
-        .product-card:hover
-        .product-image-wrapper img {
-            transform: scale(1.04);
-        }
-
-
-        .category-button {
-            border-radius: 30px;
-        }
-
-
-        .catalog-message {
-            padding: 50px 20px;
-
-            text-align: center;
-
-            border-radius: 16px;
-
-            background: #f8f9fa;
-        }
-
-
-        .product-title {
-            min-height: 48px;
-        }
-
-
-        .product-description {
-            min-height: 72px;
-        }
-
-
-        .product-stock {
-            font-size: 0.8rem;
-        }
-
-
-        .product-sku {
-            font-size: 0.75rem;
-            color: #6c757d;
-        }
-
-
-        /* =====================================================
-           HEADER E FOOTER
-        ====================================================== */
-
-        #site-header,
-        #site-footer {
-            width: 100%;
-        }
-
-
-        /* =====================================================
-           BOTÃO FLUTUANTE DO CARRINHO
-        ====================================================== */
-
-        .cart-floating-button {
-            z-index: 1050;
-
-            width: 60px;
-            height: 60px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-
-        .badge-cart {
-            position: absolute;
-
-            top: -3px;
-            right: -3px;
-
-            min-width: 24px;
-            height: 24px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            padding: 0 6px;
-
-            border-radius: 50%;
-
-            font-size: 0.75rem;
-            font-weight: 700;
-
-            background: #dc3545;
-            color: #ffffff;
-        }
-
-
-        /* =====================================================
-           RESPONSIVIDADE
-        ====================================================== */
-
-        @media (max-width: 767.98px) {
-
-            .product-image-wrapper {
-                height: 240px;
-            }
-
-        }
-
-    </style>
+</style>
+```
 
 </head>
 
-
 <body>
 
+```
+<!-- HEADER -->
 
-    <!-- =========================================================
-         HEADER
-         
-         O conteúdo será carregado por:
-         js/includes.js
-         
-         Fonte:
-         includes/header.html
-    ========================================================== -->
-
-    <header
-        id="site-header"
-        aria-label="Cabeçalho do site"
-    ></header>
+<header
+    id="site-header"
+    aria-label="Cabeçalho do site"
+></header>
 
 
-    <!-- =========================================================
-         BOTÃO FLUTUANTE DO CARRINHO
-    ========================================================== -->
+<!-- BOTÃO FLUTUANTE DO CARRINHO -->
 
-    <button
-        type="button"
+<button
+    type="button"
+    class="
+        btn
+        btn-primary
+        rounded-circle
+        position-fixed
+        bottom-0
+        end-0
+        m-4
+        shadow-lg
+        cart-floating-button
+    "
+    data-bs-toggle="offcanvas"
+    data-bs-target="#cartOffcanvas"
+    aria-controls="cartOffcanvas"
+    aria-label="Abrir carrinho"
+>
+
+    <i
         class="
-            btn
-            btn-primary
-            rounded-circle
-            position-fixed
-            bottom-0
-            end-0
-            m-4
-            shadow-lg
-            cart-floating-button
+            fa-solid
+            fa-bag-shopping
+            fa-lg
+            text-dark
         "
-        data-bs-toggle="offcanvas"
-        data-bs-target="#cartOffcanvas"
-        aria-controls="cartOffcanvas"
-        aria-label="Abrir carrinho"
+    ></i>
+
+    <span
+        id="cart-badge-count"
+        class="badge-cart"
+        aria-live="polite"
+    >
+        0
+    </span>
+
+</button>
+
+
+<!-- CONTEÚDO PRINCIPAL -->
+
+<main>
+
+    <!-- HERO -->
+
+    <section
+        id="hero-sales"
+        class="
+            container-fluid
+            p-0
+            hero-header
+            bg-light
+            mb-5
+        "
     >
 
-        <i
-            class="
-                fa-solid
-                fa-bag-shopping
-                fa-lg
-                text-dark
-            "
-        ></i>
-
-
-        <span
-            id="cart-badge-count"
-            class="badge-cart"
-            aria-live="polite"
-        >
-            0
-        </span>
-
-    </button>
-
-
-    <!-- =========================================================
-         CONTEÚDO PRINCIPAL
-    ========================================================== -->
-
-    <main>
-
-
-        <!-- =====================================================
-             HERO
-        ====================================================== -->
-
-        <section
-            id="hero-sales"
-            class="
-                container-fluid
-                p-0
-                hero-header
-                bg-light
-                mb-5
-            "
-        >
-
-            <div class="container p-0">
-
-                <div
-                    class="
-                        row
-                        g-0
-                        align-items-center
-                    "
-                >
-
-
-                    <!-- TEXTO -->
-
-                    <div
-                        class="
-                            col-lg-6
-                            hero-header-text
-                            py-5
-                        "
-                    >
-
-                        <div
-                            class="
-                                py-5
-                                px-3
-                                ps-lg-0
-                            "
-                        >
-
-                            <h1
-                                class="
-                                    font-dancing-script
-                                    text-primary
-                                "
-                            >
-                                Linha Profissional
-                            </h1>
-
-
-                            <h2 class="display-3 mb-4">
-
-                                Shine Express
-                                <span class="d-inline-block">
-                                    & Ecobelle
-                                </span>
-
-                            </h2>
-
-
-                            <p class="fs-5 text-dark mb-4">
-
-                                Alta performance, brilho
-                                tridimensional e resultados de
-                                salão direto para o seu atendimento
-                                ou tratamento diário.
-
-                            </p>
-
-
-                            <a
-                                href="#catalogo"
-                                class="
-                                    btn
-                                    btn-primary
-                                    text-uppercase
-                                    px-5
-                                    py-3
-                                "
-                            >
-
-                                Ver Catálogo Completo
-
-                            </a>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- IMAGEM -->
-
-                    <div class="col-lg-6">
-
-                        <div class="p-4 text-center">
-
-                            <img
-                                src="img/about.jpg"
-                                class="
-                                    img-fluid
-                                    rounded
-                                    shadow-lg
-                                "
-                                alt="Produtos Shine Express e Ecobelle"
-                                loading="eager"
-                                style="
-                                    max-height: 400px;
-                                    object-fit: cover;
-                                "
-                            >
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =====================================================
-             BANNER PROMOCIONAL
-        ====================================================== -->
-
-        <section
-            class="
-                container-fluid
-                bg-primary
-                py-4
-                mb-5
-            "
-        >
+        <div class="container p-0">
 
             <div
                 class="
-                    container
-                    text-center
-                    text-md-start
+                    row
+                    g-0
+                    align-items-center
                 "
             >
 
                 <div
                     class="
-                        row
-                        align-items-center
+                        col-lg-6
+                        hero-header-text
+                        py-5
                     "
                 >
 
-
-                    <div class="col-md-8 text-dark">
-
-                        <h3
-                            class="
-                                font-dancing-script
-                                text-dark
-                                mb-1
-                            "
-                        >
-                            Condição Especial para Profissionais
-                        </h3>
-
-
-                        <h2
-                            class="
-                                mb-0
-                                font-work-sans
-                            "
-                        >
-                            Frete Grátis e Descontos Exclusivos
-                            no Pedido
-                        </h2>
-
-                    </div>
-
-
                     <div
                         class="
-                            col-md-4
-                            text-md-end
-                            mt-3
-                            mt-md-0
+                            py-5
+                            px-3
+                            ps-lg-0
                         "
                     >
 
+                        <h1
+                            class="
+                                font-dancing-script
+                                text-primary
+                            "
+                        >
+                            Linha Profissional
+                        </h1>
+
+                        <h2 class="display-3 mb-4">
+
+                            Shine Express
+                            <span class="d-inline-block">
+                                & Ecobelle
+                            </span>
+
+                        </h2>
+
+                        <p class="fs-5 text-dark mb-4">
+
+                            Alta performance, brilho
+                            tridimensional e resultados de
+                            salão direto para o seu atendimento
+                            ou tratamento diário.
+
+                        </p>
+
                         <a
-                            href="https://wa.me/5511986215473"
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            href="#catalogo"
                             class="
                                 btn
-                                btn-dark
+                                btn-primary
                                 text-uppercase
-                                px-4
+                                px-5
                                 py-3
                             "
                         >
-
-                            <i
-                                class="
-                                    fa-brands
-                                    fa-whatsapp
-                                    me-2
-                                "
-                            ></i>
-
-                            Falar com Consultor
-
+                            Ver Catálogo Completo
                         </a>
 
                     </div>
 
                 </div>
 
-            </div>
 
-        </section>
+                <div class="col-lg-6">
 
+                    <div class="p-4 text-center">
 
-        <!-- =====================================================
-             CATÁLOGO
-             
-             Os produtos NÃO ficam neste HTML.
-
-             Fonte oficial:
-             resources/catalogo.csv
-
-             Leitura:
-             js/catalog.js
-        ====================================================== -->
-
-        <section
-            id="catalogo"
-            class="
-                container-fluid
-                py-5
-            "
-        >
-
-            <div class="container">
-
-
-                <!-- TÍTULO -->
-
-                <div
-                    class="
-                        text-center
-                        mb-5
-                    "
-                >
-
-                    <h1
-                        class="
-                            font-dancing-script
-                            text-primary
-                        "
-                    >
-                        Nossos Produtos
-                    </h1>
-
-
-                    <h2 class="mb-3">
-                        Catálogo de Vendas
-                    </h2>
-
-
-                    <p class="text-muted mb-0">
-
-                        Confira nossa linha de produtos
-                        profissionais.
-
-                    </p>
-
-                </div>
-
-
-                <!-- =================================================
-                     FILTROS DE CATEGORIA
-                ================================================== -->
-
-                <div
-                    id="category-filters"
-                    class="
-                        d-flex
-                        justify-content-center
-                        flex-wrap
-                        gap-2
-                        mb-5
-                    "
-                    aria-label="Categorias de produtos"
-                ></div>
-
-
-                <!-- =================================================
-                     GRID DE PRODUTOS
-                ================================================== -->
-
-                <div
-                    id="product-grid"
-                    class="row g-4"
-                    aria-live="polite"
-                >
-
-                    <!-- Estado inicial -->
-
-                    <div class="col-12">
-
-                        <div class="catalog-message">
-
-                            <div
-                                class="
-                                    spinner-border
-                                    text-primary
-                                    mb-3
-                                "
-                                role="status"
-                                aria-label="Carregando"
-                            >
-
-                                <span
-                                    class="visually-hidden"
-                                >
-                                    Carregando produtos...
-                                </span>
-
-                            </div>
-
-
-                            <h4>
-                                Carregando catálogo...
-                            </h4>
-
-
-                            <p
-                                class="
-                                    text-muted
-                                    mb-0
-                                "
-                            >
-                                Aguarde enquanto carregamos
-                                os produtos.
-                            </p>
-
-                        </div>
+                        <img
+                            src="img/about.jpg"
+                            class="
+                                img-fluid
+                                rounded
+                                shadow-lg
+                            "
+                            alt="Produtos Shine Express e Ecobelle"
+                            loading="eager"
+                            style="
+                                max-height: 400px;
+                                object-fit: cover;
+                            "
+                        >
 
                     </div>
 
@@ -688,290 +379,453 @@
 
             </div>
 
-        </section>
+        </div>
 
-    </main>
+    </section>
 
 
-    <!-- =========================================================
-         OFFCANVAS DO CARRINHO
-    ========================================================== -->
+    <!-- BANNER PROMOCIONAL -->
 
-    <div
+    <section
         class="
-            offcanvas
-            offcanvas-end
+            container-fluid
+            bg-primary
+            py-4
+            mb-5
         "
-        tabindex="-1"
-        id="cartOffcanvas"
-        aria-labelledby="cartOffcanvasLabel"
     >
-
-
-        <!-- CABEÇALHO -->
 
         <div
             class="
-                offcanvas-header
-                bg-dark
-                text-white
+                container
+                text-center
+                text-md-start
             "
         >
 
-            <h2
+            <div
                 class="
-                    offcanvas-title
-                    text-primary
-                    font-dancing-script
-                    fs-3
+                    row
+                    align-items-center
                 "
-                id="cartOffcanvasLabel"
             >
-                Seu Carrinho
-            </h2>
+
+                <div class="col-md-8 text-dark">
+
+                    <h3
+                        class="
+                            font-dancing-script
+                            text-dark
+                            mb-1
+                        "
+                    >
+                        Condição Especial para Profissionais
+                    </h3>
+
+                    <h2
+                        class="
+                            mb-0
+                            font-work-sans
+                        "
+                    >
+                        Frete Grátis e Descontos Exclusivos
+                        no Pedido
+                    </h2>
+
+                </div>
 
 
-            <button
-                type="button"
+                <div
+                    class="
+                        col-md-4
+                        text-md-end
+                        mt-3
+                        mt-md-0
+                    "
+                >
+
+                    <a
+                        href="https://wa.me/5511986215473"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="
+                            btn
+                            btn-dark
+                            text-uppercase
+                            px-4
+                            py-3
+                        "
+                    >
+
+                        <i
+                            class="
+                                fa-brands
+                                fa-whatsapp
+                                me-2
+                            "
+                        ></i>
+
+                        Falar com Consultor
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- CATÁLOGO -->
+
+    <section
+        id="catalogo"
+        class="
+            container-fluid
+            py-5
+        "
+    >
+
+        <div class="container">
+
+            <div
                 class="
-                    btn-close
-                    btn-close-white
+                    text-center
+                    mb-5
                 "
-                data-bs-dismiss="offcanvas"
-                aria-label="Fechar carrinho"
-            ></button>
+            >
+
+                <h1
+                    class="
+                        font-dancing-script
+                        text-primary
+                    "
+                >
+                    Nossos Produtos
+                </h1>
+
+                <h2 class="mb-3">
+                    Catálogo de Vendas
+                </h2>
+
+                <p class="text-muted mb-0">
+
+                    Confira nossa linha de produtos
+                    profissionais.
+
+                </p>
+
+            </div>
+
+
+            <!-- FILTROS -->
+
+            <div
+                id="category-filters"
+                class="
+                    d-flex
+                    justify-content-center
+                    flex-wrap
+                    gap-2
+                    mb-5
+                "
+                aria-label="Categorias de produtos"
+            ></div>
+
+
+            <!-- PRODUTOS -->
+
+            <div
+                id="product-grid"
+                class="row g-4"
+                aria-live="polite"
+            >
+
+                <div class="col-12">
+
+                    <div class="catalog-message">
+
+                        <div
+                            class="
+                                spinner-border
+                                text-primary
+                                mb-3
+                            "
+                            role="status"
+                            aria-label="Carregando"
+                        >
+
+                            <span
+                                class="visually-hidden"
+                            >
+                                Carregando produtos...
+                            </span>
+
+                        </div>
+
+                        <h4>
+                            Carregando catálogo...
+                        </h4>
+
+                        <p
+                            class="
+                                text-muted
+                                mb-0
+                            "
+                        >
+                            Aguarde enquanto carregamos
+                            os produtos.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- OFFCANVAS DO CARRINHO -->
+
+<div
+    class="
+        offcanvas
+        offcanvas-end
+    "
+    tabindex="-1"
+    id="cartOffcanvas"
+    aria-labelledby="cartOffcanvasLabel"
+>
+
+    <div
+        class="
+            offcanvas-header
+            bg-dark
+            text-white
+        "
+    >
+
+        <h2
+            class="
+                offcanvas-title
+                text-primary
+                font-dancing-script
+                fs-3
+            "
+            id="cartOffcanvasLabel"
+        >
+            Seu Carrinho
+        </h2>
+
+        <button
+            type="button"
+            class="
+                btn-close
+                btn-close-white
+            "
+            data-bs-dismiss="offcanvas"
+            aria-label="Fechar carrinho"
+        ></button>
+
+    </div>
+
+
+    <div
+        class="
+            offcanvas-body
+            d-flex
+            flex-column
+        "
+    >
+
+        <div
+            id="cart-items"
+            class="
+                flex-grow-1
+                overflow-auto
+            "
+        >
+
+            <div
+                class="
+                    text-center
+                    text-muted
+                    py-5
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        fa-bag-shopping
+                        fa-2x
+                        mb-3
+                    "
+                ></i>
+
+                <p class="mb-0">
+                    Seu carrinho está vazio.
+                </p>
+
+            </div>
 
         </div>
 
 
-        <!-- CONTEÚDO -->
+        <!-- RESUMO -->
 
         <div
             class="
-                offcanvas-body
-                d-flex
-                flex-column
+                border-top
+                pt-3
+                mt-3
             "
         >
 
-
-            <!-- ITENS -->
-
             <div
-                id="cart-items"
                 class="
-                    flex-grow-1
-                    overflow-auto
+                    d-flex
+                    justify-content-between
+                    mb-2
                 "
             >
 
-                <div
+                <span class="fw-bold">
+                    Subtotal:
+                </span>
+
+                <span
+                    id="cart-subtotal"
                     class="
-                        text-center
-                        text-muted
-                        py-5
-                    "
-                >
-
-                    <i
-                        class="
-                            fa-solid
-                            fa-bag-shopping
-                            fa-2x
-                            mb-3
-                        "
-                    ></i>
-
-
-                    <p class="mb-0">
-                        Seu carrinho está vazio.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <!-- RESUMO -->
-
-            <div
-                class="
-                    border-top
-                    pt-3
-                    mt-3
-                "
-            >
-
-
-                <!-- SUBTOTAL -->
-
-                <div
-                    class="
-                        d-flex
-                        justify-content-between
-                        mb-2
-                    "
-                >
-
-                    <span class="fw-bold">
-                        Subtotal:
-                    </span>
-
-
-                    <span
-                        id="cart-subtotal"
-                        class="
-                            fw-bold
-                            text-primary
-                            fs-5
-                        "
-                    >
-                        R$ 0,00
-                    </span>
-
-                </div>
-
-
-                <!-- DESCONTO -->
-
-                <div
-                    class="
-                        d-flex
-                        justify-content-between
-                        mb-2
-                    "
-                >
-
-                    <span>
-                        Desconto:
-                    </span>
-
-
-                    <span
-                        id="cart-discount"
-                        class="
-                            fw-bold
-                            text-danger
-                        "
-                    >
-                        - R$ 0,00
-                    </span>
-
-                </div>
-
-
-                <!-- TOTAL -->
-
-                <div
-                    class="
-                        d-flex
-                        justify-content-between
-                        align-items-center
-                        mb-3
-                    "
-                >
-
-                    <span class="fw-bold fs-5">
-                        Total:
-                    </span>
-
-
-                    <span
-                        id="cart-total"
-                        class="
-                            fw-bold
-                            text-primary
-                            fs-5
-                        "
-                    >
-                        R$ 0,00
-                    </span>
-
-                </div>
-
-
-                <!-- CHECKOUT -->
-
-                <a
-                    href="checkout.html"
-                    class="
-                        btn
-                        btn-primary
-                        w-100
-                        py-3
-                        text-uppercase
                         fw-bold
+                        text-primary
+                        fs-5
                     "
                 >
-
-                    Avançar para Entrega
-
-                    <i
-                        class="
-                            fa-solid
-                            fa-arrow-right
-                            ms-2
-                        "
-                    ></i>
-
-                </a>
+                    R$ 0,00
+                </span>
 
             </div>
+
+
+            <div
+                class="
+                    d-flex
+                    justify-content-between
+                    mb-2
+                "
+            >
+
+                <span>
+                    Desconto:
+                </span>
+
+                <span
+                    id="cart-discount"
+                    class="
+                        fw-bold
+                        text-danger
+                    "
+                >
+                    - R$ 0,00
+                </span>
+
+            </div>
+
+
+            <div
+                class="
+                    d-flex
+                    justify-content-between
+                    align-items-center
+                    mb-3
+                "
+            >
+
+                <span class="fw-bold fs-5">
+                    Total:
+                </span>
+
+                <span
+                    id="cart-total"
+                    class="
+                        fw-bold
+                        text-primary
+                        fs-5
+                    "
+                >
+                    R$ 0,00
+                </span>
+
+            </div>
+
+
+            <a
+                href="checkout.html"
+                class="
+                    btn
+                    btn-primary
+                    w-100
+                    py-3
+                    text-uppercase
+                    fw-bold
+                "
+            >
+
+                Avançar para Entrega
+
+                <i
+                    class="
+                        fa-solid
+                        fa-arrow-right
+                        ms-2
+                    "
+                ></i>
+
+            </a>
 
         </div>
 
     </div>
 
-
-    <!-- =========================================================
-         FOOTER
-         
-         Conteúdo carregado por:
-         js/includes.js
-
-         Fonte:
-         includes/footer.html
-    ========================================================== -->
-
-    <footer
-        id="site-footer"
-        aria-label="Rodapé do site"
-    ></footer>
+</div>
 
 
-    <!-- =========================================================
-         BOOTSTRAP JS
-         
-         O projeto não possui:
-         js/vendor/bootstrap.bundle.min.js
+<!-- FOOTER -->
 
-         Por isso utilizamos a versão CDN.
-    ========================================================== -->
-
-    <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    ></script>
+<footer
+    id="site-footer"
+    aria-label="Rodapé do site"
+></footer>
 
 
-    <!-- =========================================================
-         INCLUDES
-         
-         Responsável por:
-         includes/header.html
-         includes/footer.html
-    ========================================================== -->
+<!-- =========================================================
+     JAVASCRIPT
+     
+     ORDEM:
+     1. Bootstrap
+     2. Includes
+     3. Catálogo
+     4. Carrinho
+========================================================== -->
 
-    <script
-        src="js/includes.js"
-    ></script>
-
-
-   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+></script>
 
 <script src="js/includes.js"></script>
-<script src="js/catalog.js"></script>
-<script src="js/cart.js"></script>
 
+<script src="js/catalog.js"></script>
+
+<script src="js/cart.js"></script>
+```
 
 </body>
 
